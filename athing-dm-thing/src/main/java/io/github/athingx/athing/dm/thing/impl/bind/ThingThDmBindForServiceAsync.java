@@ -11,11 +11,11 @@ import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mapping
 import static io.github.athingx.athing.thing.api.function.ThingFnMatcher.matchesTopic;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingDmBindForServiceAsync extends ThingDmBindForService {
+public class ThingThDmBindForServiceAsync extends ThingThDmBindForService {
 
     private final Thing thing;
 
-    public ThingDmBindForServiceAsync(Thing thing, ThingDmCompContainer container) {
+    public ThingThDmBindForServiceAsync(Thing thing, ThingDmCompContainer container) {
         super(thing, container);
         this.thing = thing;
     }

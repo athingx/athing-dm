@@ -10,11 +10,11 @@ import java.util.concurrent.CompletableFuture;
 import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mappingJsonFromBytes;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingDmBindForServiceSync extends ThingDmBindForService {
+public class ThingThDmBindForServiceSync extends ThingThDmBindForService {
 
     private final Thing thing;
 
-    public ThingDmBindForServiceSync(Thing thing, ThingDmCompContainer container) {
+    public ThingThDmBindForServiceSync(Thing thing, ThingDmCompContainer container) {
         super(thing, container);
         this.thing = thing;
     }

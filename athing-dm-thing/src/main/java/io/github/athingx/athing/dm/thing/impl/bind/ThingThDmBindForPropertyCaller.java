@@ -11,12 +11,12 @@ import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mapping
 import static io.github.athingx.athing.thing.api.function.ThingFnMapOpReply.mappingOpReplyFromJson;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingDmBindForPropertyCaller implements ThingDmBind<OpCaller<OpData, OpReply<Void>>> {
+public class ThingThDmBindForPropertyCaller implements ThingThDmBind<OpCaller<OpData, OpReply<Void>>> {
 
     private final Thing thing;
     private final ThingDmOption option;
 
-    public ThingDmBindForPropertyCaller(Thing thing, ThingDmOption option) {
+    public ThingThDmBindForPropertyCaller(Thing thing, ThingDmOption option) {
         this.thing = thing;
         this.option = option;
     }
@@ -27,7 +27,7 @@ public class ThingDmBindForPropertyCaller implements ThingDmBind<OpCaller<OpData
                 .bind("/sys/%s/thing/event/property/post_reply".formatted(thing.path().toURN()))
                 .map(mappingJsonFromBytes(UTF_8))
                 .map(mappingOpReplyFromJson(Void.class))
-                .call(new OpBind.Option().setTimeoutMs(option.getDmCallPropertyTimeoutMs()), identity());
+                .call(new OpBind.Option().setTimeoutMs(option.getPropertyTimeoutMs()), identity());
     }
 
 }

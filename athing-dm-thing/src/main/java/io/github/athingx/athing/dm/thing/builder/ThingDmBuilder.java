@@ -29,21 +29,21 @@ public class ThingDmBuilder {
         final ThingDmCompContainer container = new ThingDmCompContainer(thing.path());
 
         // 批量绑定
-        Stream.of(new ThingDmBind[]{
-                new ThingDmBindForPropertySet(thing, container),
-                new ThingDmBindForServiceAsync(thing, container),
-                new ThingDmBindForPropertySet(thing, container),
-                new ThingDmBindForServiceSync(thing, container)
+        Stream.of(new ThingThDmBind[]{
+                new ThingThDmBindForPropertySet(thing, container),
+                new ThingThDmBindForServiceAsync(thing, container),
+                new ThingThDmBindForPropertySet(thing, container),
+                new ThingThDmBindForServiceSync(thing, container)
         }).forEach(bind -> bind.bind(group));
 
         // 绑定事件上报呼叫
         final CompletableFuture<OpCaller<OpData, OpReply<Void>>> eCallerFuture
-                = new ThingDmBindForEventCaller(thing, option)
+                = new ThingThDmBindForEventCaller(thing, option)
                 .bind(group);
 
         // 绑定属性上报呼叫
         final CompletableFuture<OpCaller<OpData, OpReply<Void>>> pCallerFuture
-                = new ThingDmBindForPropertyCaller(thing, option)
+                = new ThingThDmBindForPropertyCaller(thing, option)
                 .bind(group);
 
         // 提交绑定

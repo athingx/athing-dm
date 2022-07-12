@@ -12,12 +12,12 @@ import static io.github.athingx.athing.thing.api.function.ThingFnMapOpReply.mapp
 import static io.github.athingx.athing.thing.api.function.ThingFnMatcher.matchesTopic;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingDmBindForEventCaller implements ThingDmBind<OpCaller<OpData, OpReply<Void>>> {
+public class ThingThDmBindForEventCaller implements ThingThDmBind<OpCaller<OpData, OpReply<Void>>> {
 
     private final Thing thing;
     private final ThingDmOption option;
 
-    public ThingDmBindForEventCaller(Thing thing, ThingDmOption option) {
+    public ThingThDmBindForEventCaller(Thing thing, ThingDmOption option) {
         this.thing = thing;
         this.option = option;
     }
@@ -32,7 +32,7 @@ public class ThingDmBindForEventCaller implements ThingDmBind<OpCaller<OpData, O
                 .matches(matchesTopic(topic -> topic.endsWith("/thing/event/property/post_reply")))
                 .map(mappingJsonFromBytes(UTF_8))
                 .map(mappingOpReplyFromJson(Void.class))
-                .call(new OpBind.Option().setTimeoutMs(option.getDmCallEventTimeoutMs()), identity());
+                .call(new OpBind.Option().setTimeoutMs(option.getEventTimeoutMs()), identity());
     }
 
 }

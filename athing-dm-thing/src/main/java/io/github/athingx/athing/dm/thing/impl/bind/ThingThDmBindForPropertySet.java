@@ -24,13 +24,13 @@ import java.util.concurrent.CompletableFuture;
 import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mappingJsonFromBytes;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingDmBindForPropertySet implements ThingDmBind<OpBinder> {
+public class ThingThDmBindForPropertySet implements ThingThDmBind<OpBinder> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
     private final ThingDmCompContainer container;
 
-    public ThingDmBindForPropertySet(Thing thing, ThingDmCompContainer container) {
+    public ThingThDmBindForPropertySet(Thing thing, ThingDmCompContainer container) {
         this.thing = thing;
         this.container = container;
     }

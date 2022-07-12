@@ -2,23 +2,25 @@ package io.github.athingx.athing.dm.thing.builder;
 
 public class ThingDmOption {
 
-    private long dmCallEventTimeoutMs = 30L * 1000;
-    private long dmCallPropertyTimeoutMs = 30L * 1000;
+    private long eventTimeoutMs = 30L * 1000;
+    private long propertyTimeoutMs = 30L * 1000;
 
-    public long getDmCallEventTimeoutMs() {
-        return dmCallEventTimeoutMs;
+    public long getEventTimeoutMs() {
+        return eventTimeoutMs;
     }
 
-    public void setDmCallEventTimeoutMs(long dmCallEventTimeoutMs) {
-        this.dmCallEventTimeoutMs = dmCallEventTimeoutMs;
+    public ThingDmOption setEventTimeoutMs(long eventTimeoutMs) {
+        this.eventTimeoutMs = eventTimeoutMs;
+        return this;
     }
 
-    public long getDmCallPropertyTimeoutMs() {
-        return dmCallPropertyTimeoutMs;
+    public long getPropertyTimeoutMs() {
+        return propertyTimeoutMs;
     }
 
-    public void setDmCallPropertyTimeoutMs(long dmCallPropertyTimeoutMs) {
-        this.dmCallPropertyTimeoutMs = dmCallPropertyTimeoutMs;
+    public ThingDmOption setPropertyTimeoutMs(long propertyTimeoutMs) {
+        this.propertyTimeoutMs = propertyTimeoutMs;
+        return this;
     }
 
 }

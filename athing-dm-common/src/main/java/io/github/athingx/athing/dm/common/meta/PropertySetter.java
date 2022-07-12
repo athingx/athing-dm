@@ -5,7 +5,7 @@ import io.github.athingx.athing.dm.api.ThingDmComp;
 /**
  * 属性设置
  *
- * @param <T>
+ * @param <T> 属性类型
  */
 public interface PropertySetter<T> {
 

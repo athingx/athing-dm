@@ -5,7 +5,7 @@ import io.github.athingx.athing.thing.api.op.OpGroupBind;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface ThingDmBind<T extends OpBinder> {
+public interface ThingThDmBind<T extends OpBinder> {
 
     CompletableFuture<T> bind(OpGroupBind group);
 
