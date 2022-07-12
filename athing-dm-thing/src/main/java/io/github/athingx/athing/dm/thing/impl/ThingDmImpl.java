@@ -1,12 +1,16 @@
 package io.github.athingx.athing.dm.thing.impl;
 
 import io.github.athingx.athing.dm.api.Identifier;
+import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.api.ThingDmEvent;
 import io.github.athingx.athing.dm.common.meta.ThDmPropertyMeta;
 import io.github.athingx.athing.dm.common.util.MapData;
 import io.github.athingx.athing.dm.thing.ThingDm;
-import io.github.athingx.athing.dm.thing.define.ThingDmDefine;
-import io.github.athingx.athing.dm.thing.impl.define.ThingDmDefineImpl;
+import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
+import io.github.athingx.athing.dm.thing.dump.DumpTo;
+import io.github.athingx.athing.dm.thing.dump.DumpToFn;
+import io.github.athingx.athing.dm.thing.impl.define.DefineThDmCompImpl;
+import io.github.athingx.athing.dm.thing.impl.tsl.TslDumper;
 import io.github.athingx.athing.dm.thing.impl.util.MapOpData;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpCaller;
@@ -17,8 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 import static io.github.athingx.athing.thing.api.util.CompletableFutureUtils.whenCompleted;
 
@@ -117,8 +123,32 @@ public class ThingDmImpl implements ThingDm {
     }
 
     @Override
-    public ThingDmDefine define(String compId, String name, String desc) {
-        return new ThingDmDefineImpl(container, compId, name, desc);
+    public DefineThDmComp define(String compId, String name, String desc) {
+        return new DefineThDmCompImpl(container, compId, name, desc);
+    }
+
+    @Override
+    public void load(ThingDmComp... comps) {
+        if (Objects.nonNull(comps)) {
+            Stream.of(comps).forEach(container::load);
+        }
+    }
+
+    @Override
+    public DumpTo dump() {
+        @SuppressWarnings("unchecked") final Class<ThingDmComp>[] types = container.getThingDmCompSet()
+                .stream()
+                .map(ThingDmComp::getClass)
+                .toArray(Class[]::new);
+        return new DumpTo() {
+
+            @Override
+            public DumpTo dumpTo(DumpToFn fn) throws Exception {
+                fn.accept(TslDumper.dump(thing.path().getProductId(), types));
+                return this;
+            }
+
+        };
     }
 
 }

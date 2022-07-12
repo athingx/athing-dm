@@ -2,8 +2,8 @@ package io.github.athingx.athing.dm.common.meta;
 
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
-import io.github.athingx.athing.dm.api.annotation.ThDmComp;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -12,91 +12,45 @@ import java.util.Map;
  * 设备组件元数据由设备组件注解解析得来
  * </p>
  */
-public class ThDmCompMeta {
+public class ThDmCompMeta extends ThDmMeta {
 
-    private final String compId;
-    private final ThDmComp anThDmComp;
-    private final Class<? extends ThingDmComp> compType;
+    private final Class<? extends ThingDmComp> type;
     private final Map<Identifier, ThDmEventMeta> identityThDmEventMetaMap;
     private final Map<Identifier, ThDmPropertyMeta> identityThDmPropertyMetaMap;
     private final Map<Identifier, ThDmServiceMeta> identityThDmServiceMetaMap;
 
     /**
-     * 命名设备组件
+     * 组件元数据
      *
-     * @param anThDmComp                   设备组件注解
-     * @param compType              设备组件接口类型
+     * @param compId                      组件ID
+     * @param name                        名称
+     * @param desc                        描述
+     * @param type                        类型
      * @param identityThDmEventMetaMap    事件元数据集合
      * @param identityThDmPropertyMetaMap 属性元数据集合
      * @param identityThDmServiceMetaMap  服务元数据集合
      */
-    public ThDmCompMeta(final ThDmComp anThDmComp,
-                 final Class<? extends ThingDmComp> compType,
-                 final Map<Identifier, ThDmEventMeta> identityThDmEventMetaMap,
-                 final Map<Identifier, ThDmPropertyMeta> identityThDmPropertyMetaMap,
-                 final Map<Identifier, ThDmServiceMeta> identityThDmServiceMetaMap) {
-        this(
-                anThDmComp.id(),
-                anThDmComp,
-                compType,
-                identityThDmEventMetaMap,
-                identityThDmPropertyMetaMap,
-                identityThDmServiceMetaMap
-        );
-    }
-
-
-    private ThDmCompMeta(final String compId,
-                         final ThDmComp anThDmComp,
-                         final Class<? extends ThingDmComp> compType,
-                         final Map<Identifier, ThDmEventMeta> identityThDmEventMetaMap,
-                         final Map<Identifier, ThDmPropertyMeta> identityThDmPropertyMetaMap,
-                         final Map<Identifier, ThDmServiceMeta> identityThDmServiceMetaMap) {
-        this.compId = compId;
-        this.anThDmComp = anThDmComp;
-        this.compType = compType;
-        this.identityThDmEventMetaMap = identityThDmEventMetaMap;
-        this.identityThDmPropertyMetaMap = identityThDmPropertyMetaMap;
-        this.identityThDmServiceMetaMap = identityThDmServiceMetaMap;
-    }
-
-    /**
-     * 获取设备组件ID
-     *
-     * @return 设备组件ID
-     */
-    public String getId() {
-        return compId;
-    }
-
-    /**
-     * 获取设备组件名称
-     *
-     * @return 设备组件名称
-     */
-    public String getName() {
-        return anThDmComp.name();
-    }
-
-    /**
-     * 获取设备组件描述
-     *
-     * @return 设备组件描述
-     */
-    public String getDesc() {
-        return anThDmComp.desc();
+    public ThDmCompMeta(final String compId,
+                        final String name,
+                        final String desc,
+                        final Class<? extends ThingDmComp> type,
+                        final Map<Identifier, ThDmEventMeta> identityThDmEventMetaMap,
+                        final Map<Identifier, ThDmPropertyMeta> identityThDmPropertyMetaMap,
+                        final Map<Identifier, ThDmServiceMeta> identityThDmServiceMetaMap) {
+        super(compId, name, desc);
+        this.type = type;
+        this.identityThDmEventMetaMap = Collections.unmodifiableMap(identityThDmEventMetaMap);
+        this.identityThDmPropertyMetaMap = Collections.unmodifiableMap(identityThDmPropertyMetaMap);
+        this.identityThDmServiceMetaMap = Collections.unmodifiableMap(identityThDmServiceMetaMap);
     }
 
     /**
      * 获取设备组件类型
-     * <p>
-     * 设备组件类型必须是一个接口，且继承于{@link ThingDmComp}
-     * </p>
      *
      * @return 设备组件类型
      */
     public Class<? extends ThingDmComp> getType() {
-        return compType;
+        return type;
     }
 
 

@@ -1,40 +1,52 @@
 package io.github.athingx.athing.dm.common.meta;
 
 import io.github.athingx.athing.dm.api.Identifier;
-import io.github.athingx.athing.dm.api.annotation.ThDmService;
+import io.github.athingx.athing.dm.api.ThingDmComp;
 
-import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
-
-import static io.github.athingx.athing.dm.common.util.CommonUtils.isEmptyString;
-import static io.github.athingx.athing.dm.common.util.ThingDmCompUtils.dumpToLowerCaseUnderscore;
-import static io.github.athingx.athing.dm.common.util.ThingDmCompUtils.getDefaultMemberName;
+import java.util.LinkedHashMap;
 
 
 /**
  * 设备组件服务元数据
  */
-public class ThDmServiceMeta {
+public class ThDmServiceMeta extends ThDmMeta {
 
     private final Identifier identifier;
-    private final ThDmService anThDmService;
-    private final Method service;
-    private final ThDmParamMeta[] thDmParamMetaArray;
-    private final Class<?> actualReturnType;
+    private final boolean required;
+    private final boolean sync;
+    private final Class<?> returnType;
+    private final ServiceInvoker<Object> invoker;
+    private final LinkedHashMap<String, Class<?>> parameterMap;
 
-    public ThDmServiceMeta(String componentId, ThDmService anThDmService, Method service, ThDmParamMeta[] thDmParamMetaArray) {
-        this.identifier = Identifier.toIdentifier(componentId, getThServiceId(anThDmService, service));
-        this.anThDmService = anThDmService;
-        this.service = service;
-        this.thDmParamMetaArray = thDmParamMetaArray;
-        this.actualReturnType = fetchActualReturnType(service);
-    }
-
-    private String getThServiceId(ThDmService anThDmService, Method service) {
-        return isEmptyString(anThDmService.id())
-                ? dumpToLowerCaseUnderscore(service.getName())
-                : anThDmService.id();
+    /**
+     * 服务元数据
+     *
+     * @param compId       组件ID
+     * @param id           ID
+     * @param name         名称
+     * @param desc         描述
+     * @param required     是否必须
+     * @param sync         是否同步
+     * @param returnType   返回值类型
+     * @param invoker      服务调用
+     * @param parameterMap 参数类型集合
+     */
+    public ThDmServiceMeta(final String compId,
+                           final String id,
+                           final String name,
+                           final String desc,
+                           final boolean required,
+                           final boolean sync,
+                           final Class<?> returnType,
+                           final ServiceInvoker<Object> invoker,
+                           final LinkedHashMap<String, Class<?>> parameterMap) {
+        super(id, name, desc);
+        this.identifier = Identifier.toIdentifier(compId, id);
+        this.required = required;
+        this.sync = sync;
+        this.returnType = returnType;
+        this.invoker = invoker;
+        this.parameterMap = parameterMap;
     }
 
     /**
@@ -47,32 +59,12 @@ public class ThDmServiceMeta {
     }
 
     /**
-     * 获取服务名称
-     *
-     * @return 服务名称
-     */
-    public String getName() {
-        return isEmptyString(anThDmService.name())
-                ? getDefaultMemberName(getIdentifier())
-                : anThDmService.name();
-    }
-
-    /**
-     * 获取服务描述
-     *
-     * @return 服务描述
-     */
-    public String getDesc() {
-        return anThDmService.desc();
-    }
-
-    /**
      * 判断服务是否同步服务
      *
      * @return TRUE | FALSE
      */
     public boolean isSync() {
-        return anThDmService.isSync();
+        return sync;
     }
 
     /**
@@ -81,7 +73,7 @@ public class ThDmServiceMeta {
      * @return TRUE | FALSE
      */
     public boolean isRequired() {
-        return anThDmService.isRequired();
+        return required;
     }
 
     /**
@@ -89,8 +81,8 @@ public class ThDmServiceMeta {
      *
      * @return 命名参数集合
      */
-    public ThDmParamMeta[] getThDmParamMetaArray() {
-        return thDmParamMetaArray.clone();
+    public LinkedHashMap<String, Class<?>> getParameterMap() {
+        return new LinkedHashMap<>(parameterMap);
     }
 
     /**
@@ -99,66 +91,7 @@ public class ThDmServiceMeta {
      * @return 服务返回类型
      */
     public Class<?> getReturnType() {
-        return service.getReturnType();
-    }
-
-    /*
-     * 获取实际的返回类型
-     * 1. 如果是CompletableFuture<V>，实际的返回类型应该为V
-     * 2. 如果是其他类型，则等同于getReturnType
-     */
-    private Class<?> fetchActualReturnType(Method method) {
-
-        // 获取返回值类型
-        final Class<?> returnType = method.getReturnType();
-
-        // 如果返回值是：CompletableFuture<V>，需要特殊处理
-        if (CompletableFuture.class.equals(returnType)) {
-
-            // 获取返回值的泛型类型
-            final Type genType = service.getGenericReturnType();
-            if (genType instanceof final ParameterizedType pType) {
-
-                // 获取泛型接口参数类型
-                final Type[] vTypes = pType.getActualTypeArguments();
-
-                if (vTypes.length > 0) {
-                    final Type vType = vTypes[0];
-
-                    // 如果是<? extends V>类型，取上限
-                    if (vType instanceof WildcardType) {
-
-                        final Type[] uTypes = ((WildcardType) vType).getUpperBounds();
-                        if (uTypes.length > 0 && uTypes[0] instanceof Class) {
-                            return (Class<?>) uTypes[0];
-                        }
-
-                    }
-
-                    // 如果是普通类型
-                    if (vType instanceof Class) {
-                        return (Class<?>) vType;
-                    }
-
-                }
-
-            }
-        }
-
-
-        // other
         return returnType;
-    }
-
-    /**
-     * 获取实际的返回类型
-     * <li>1. 如果是CompletableFuture{@code <V>}，实际的返回类型应该为V</li>
-     * <li>2. 如果是其他类型，则等同于{@link #getReturnType()}</li>
-     *
-     * @return 实际返回类型
-     */
-    public Class<?> getActualReturnType() {
-        return actualReturnType;
     }
 
     /**
@@ -168,10 +101,9 @@ public class ThDmServiceMeta {
      * @return 参数数组
      */
     private Object[] generateArgumentArray(GetArgument getArgument) {
-        final Object[] arguments = new Object[thDmParamMetaArray.length];
-        Arrays.stream(thDmParamMetaArray).forEach(meta
-                -> arguments[meta.getIndex()] = getArgument.get(meta.getName(), meta.getType()));
-        return arguments;
+        return parameterMap.entrySet().stream()
+                .map(entry -> getArgument.get(entry.getKey(), entry.getValue()))
+                .toArray();
     }
 
     /**
@@ -180,11 +112,10 @@ public class ThDmServiceMeta {
      * @param instance    实例对象
      * @param getArgument 获取参数
      * @return 服务返回结果
-     * @throws InvocationTargetException 服务方法调用出错
-     * @throws IllegalAccessException    服务方法访问出错
+     * @throws Exception 服务方法调用出错
      */
-    public Object service(Object instance, GetArgument getArgument) throws InvocationTargetException, IllegalAccessException {
-        return service.invoke(instance, generateArgumentArray(getArgument));
+    public Object service(ThingDmComp instance, GetArgument getArgument) throws Exception {
+        return invoker.invoke(instance, generateArgumentArray(getArgument));
     }
 
     /**

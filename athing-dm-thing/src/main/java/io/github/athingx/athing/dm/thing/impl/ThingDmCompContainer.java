@@ -3,7 +3,7 @@ package io.github.athingx.athing.dm.thing.impl;
 
 import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.common.meta.ThDmCompMeta;
-import io.github.athingx.athing.dm.common.meta.ThDmCompMetaParser;
+import io.github.athingx.athing.dm.common.meta.ThDmMetaParser;
 import io.github.athingx.athing.thing.api.ThingPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class ThingDmCompContainer {
         reg(stubs -> {
 
             // 冲突检测
-            final Map<String, ThDmCompMeta> compMetaMap = ThDmCompMetaParser.parse(comp.getClass());
+            final Map<String, ThDmCompMeta> compMetaMap = ThDmMetaParser.parse(comp.getClass());
             for (final String compId : compMetaMap.keySet()) {
                 if (stubs.containsKey(compId)) {
                     throw new IllegalArgumentException("duplicate component: %s, conflict: [ %s, %s ]".formatted(

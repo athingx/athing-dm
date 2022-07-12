@@ -2,37 +2,45 @@ package io.github.athingx.athing.dm.common.meta;
 
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
-import io.github.athingx.athing.dm.api.annotation.ThDmProperty;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import static io.github.athingx.athing.dm.common.util.CommonUtils.isEmptyString;
-import static io.github.athingx.athing.dm.common.util.ThingDmCompUtils.*;
 
 
 /**
  * 设备组件属性元数据
  */
-public class ThDmPropertyMeta {
+public class ThDmPropertyMeta extends ThDmMeta {
 
     private final Identifier identifier;
-    private final ThDmProperty anThDmProperty;
-    private final Method getter;
-    private final Method setter;
+    private final boolean required;
+    private final Class<?> propertyType;
+    private final PropertyGetter<Object> getter;
+    private final PropertySetter<Object> setter;
 
-    public ThDmPropertyMeta(String compId, ThDmProperty anThDmProperty, Method getter, Method setter) {
-        this.identifier = Identifier.toIdentifier(compId, getThDmPropertyId(anThDmProperty, getter));
-        this.anThDmProperty = anThDmProperty;
+    /**
+     * 属性元数据
+     *
+     * @param compId       组件ID
+     * @param id           ID
+     * @param name         名称
+     * @param desc         描述
+     * @param required     是否必须
+     * @param propertyType 属性类型
+     * @param getter       属性取值
+     * @param setter       属性赋值
+     */
+    public ThDmPropertyMeta(final String compId,
+                            final String id,
+                            final String name,
+                            final String desc,
+                            final boolean required,
+                            final Class<?> propertyType,
+                            final PropertyGetter<Object> getter,
+                            final PropertySetter<Object> setter) {
+        super(id, name, desc);
+        this.identifier = Identifier.toIdentifier(compId, id);
+        this.required = required;
+        this.propertyType = propertyType;
         this.getter = getter;
         this.setter = setter;
-    }
-
-    // 获取属性ID
-    private String getThDmPropertyId(ThDmProperty anThDmProperty, Method getter) {
-        return isEmptyString(anThDmProperty.id())
-                ? dumpToLowerCaseUnderscore(getJavaBeanPropertyName(getter.getName()))
-                : anThDmProperty.id();
     }
 
     /**
@@ -45,32 +53,12 @@ public class ThDmPropertyMeta {
     }
 
     /**
-     * 获取属性名称
-     *
-     * @return 属性名称
-     */
-    public String getName() {
-        return isEmptyString(anThDmProperty.name())
-                ? getDefaultMemberName(getIdentifier())
-                : anThDmProperty.name();
-    }
-
-    /**
-     * 获取属性描述
-     *
-     * @return 属性描述
-     */
-    public String getDesc() {
-        return anThDmProperty.desc();
-    }
-
-    /**
      * 判断属性是否必须
      *
      * @return TRUE | FALSE
      */
     public boolean isRequired() {
-        return anThDmProperty.isRequired();
+        return required;
     }
 
     /**
@@ -88,7 +76,7 @@ public class ThDmPropertyMeta {
      * @return 属性类型
      */
     public Class<?> getPropertyType() {
-        return getter.getReturnType();
+        return propertyType;
     }
 
     /**
@@ -96,11 +84,10 @@ public class ThDmPropertyMeta {
      *
      * @param instance 组件实例
      * @return 属性值
-     * @throws InvocationTargetException 获取属性方法调用失败
-     * @throws IllegalAccessException    获取属性方法访问失败
+     * @throws Exception 获取属性方法调用失败
      */
-    public Object getPropertyValue(ThingDmComp instance) throws InvocationTargetException, IllegalAccessException {
-        return getter.invoke(instance);
+    public Object getPropertyValue(ThingDmComp instance) throws Exception {
+        return getter.get(instance);
     }
 
     /**
@@ -108,14 +95,13 @@ public class ThDmPropertyMeta {
      *
      * @param instance      组件实例
      * @param propertyValue 属性值
-     * @throws InvocationTargetException 设置属性方法调用失败
-     * @throws IllegalAccessException    设置属性方法访问失败
+     * @throws Exception 设置属性方法调用失败
      */
-    public void setPropertyValue(ThingDmComp instance, Object propertyValue) throws InvocationTargetException, IllegalAccessException {
+    public void setPropertyValue(ThingDmComp instance, Object propertyValue) throws Exception {
         if (isReadonly()) {
             throw new UnsupportedOperationException(String.format("property: %s is readonly!", getIdentifier()));
         }
-        setter.invoke(instance, propertyValue);
+        setter.set(instance, propertyValue);
     }
 
 }

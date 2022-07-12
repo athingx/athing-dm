@@ -1,13 +1,18 @@
 package io.github.athingx.athing.dm.thing;
 
 import io.github.athingx.athing.dm.api.Identifier;
+import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.api.ThingDmEvent;
-import io.github.athingx.athing.dm.thing.define.ThingDmDefine;
+import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
+import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import io.github.athingx.athing.thing.api.op.OpReply;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * 设备模型
+ */
 public interface ThingDm {
 
     /**
@@ -26,6 +31,28 @@ public interface ThingDm {
      */
     CompletableFuture<OpReply<Set<Identifier>>> properties(Identifier... identifiers);
 
-    ThingDmDefine define(String compId, String name, String desc);
+    /**
+     * 定义设备组件
+     *
+     * @param compId 组件ID
+     * @param name   名称
+     * @param desc   描述
+     * @return 设备组件定义
+     */
+    DefineThDmComp define(String compId, String name, String desc);
+
+    /**
+     * 加载设备组件
+     *
+     * @param comps 设备组件集合
+     */
+    void load(ThingDmComp... comps);
+
+    /**
+     * 导出当前设备模型
+     *
+     * @return 导出处理
+     */
+    DumpTo dump();
 
 }

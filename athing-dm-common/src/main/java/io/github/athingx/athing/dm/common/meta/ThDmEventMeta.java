@@ -4,20 +4,35 @@ import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmData;
 import io.github.athingx.athing.dm.api.annotation.ThDmEvent;
 
-import static io.github.athingx.athing.dm.common.util.CommonUtils.isEmptyString;
-import static io.github.athingx.athing.dm.common.util.ThingDmCompUtils.getDefaultMemberName;
-
 /**
  * 设备组件事件元数据
  */
-public class ThDmEventMeta {
+public class ThDmEventMeta extends ThDmMeta {
 
     private final Identifier identifier;
-    private final ThDmEvent anThDmEvent;
+    private final Class<? extends ThingDmData> type;
+    private final ThDmEvent.Level level;
 
-    public ThDmEventMeta(String compId, ThDmEvent anThDmEvent) {
-        this.anThDmEvent = anThDmEvent;
-        this.identifier = Identifier.toIdentifier(compId, anThDmEvent.id());
+    /**
+     * 事件元数据
+     *
+     * @param compId 组件ID
+     * @param id     ID
+     * @param name   名称
+     * @param desc   描述
+     * @param type   事件数据类型
+     * @param level  事件等级
+     */
+    public ThDmEventMeta(final String compId,
+                         final String id,
+                         final String name,
+                         final String desc,
+                         final Class<? extends ThingDmData> type,
+                         final ThDmEvent.Level level) {
+        super(id, name, desc);
+        this.identifier = Identifier.toIdentifier(compId, id);
+        this.type = type;
+        this.level = level;
     }
 
     /**
@@ -30,32 +45,12 @@ public class ThDmEventMeta {
     }
 
     /**
-     * 获取事件名称
+     * 获取事件数据类型
      *
-     * @return 事件名称
-     */
-    public String getName() {
-        return isEmptyString(anThDmEvent.name())
-                ? getDefaultMemberName(getIdentifier())
-                : anThDmEvent.name();
-    }
-
-    /**
-     * 获取事件描述
-     *
-     * @return 事件描述
-     */
-    public String getDesc() {
-        return anThDmEvent.desc();
-    }
-
-    /**
-     * 获取事件类型
-     *
-     * @return 事件类型
+     * @return 事件数据类型
      */
     public Class<? extends ThingDmData> getType() {
-        return anThDmEvent.type();
+        return type;
     }
 
     /**
@@ -64,7 +59,7 @@ public class ThDmEventMeta {
      * @return 事件等级
      */
     public ThDmEvent.Level getLevel() {
-        return anThDmEvent.level();
+        return level;
     }
 
 }
