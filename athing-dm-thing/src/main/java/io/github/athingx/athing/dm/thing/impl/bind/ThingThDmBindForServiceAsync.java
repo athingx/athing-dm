@@ -29,7 +29,7 @@ public class ThingThDmBindForServiceAsync extends ThingThDmBindForService {
                  * 阿里云MQTT实现的BUG，文档上说明_reply只有发布权限没有订阅，但仍然还会推送_reply消息回来，
                  * 真的是无语，只能在这里进行一次过滤，就是可怜了客户端多收了一次消息
                  */
-                .matches(matchesTopic(topic -> topic.endsWith("_reply")))
+                .matches(matchesTopic(topic -> !topic.endsWith("_reply")))
 
                 .map(mappingJsonFromBytes(UTF_8))
                 .bind((topic, message) -> service(false, topic, message));

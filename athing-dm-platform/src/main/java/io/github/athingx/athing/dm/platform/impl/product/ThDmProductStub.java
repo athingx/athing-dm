@@ -14,6 +14,7 @@ import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
 import io.github.athingx.athing.dm.common.util.MapData;
 import io.github.athingx.athing.dm.platform.domain.SortOrder;
 import io.github.athingx.athing.dm.platform.domain.ThingDmPropertySnapshot;
+import io.github.athingx.athing.dm.platform.helper.OpRuntime;
 import io.github.athingx.athing.platform.api.ThingPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,6 +121,10 @@ public class ThDmProductStub {
             final Object result = gson.fromJson(response.getData().getResult(), sMeta.getActualReturnType());
             logger.debug("{}/{}/service invoke success, token={};identity={};", this, thingId, token, identity);
 
+            if (OpRuntime.isInRuntime()) {
+                OpRuntime.getRuntime().setToken(token);
+            }
+
             // 返回类型需要做进一步封装处理
             return box(sMeta, result);
 
@@ -203,6 +208,10 @@ public class ThDmProductStub {
 
             final String token = response.getData().getMessageId();
             logger.debug("{}/{}/property set finished, waiting for reply. token={};identities={};", this, thingId, token, propertyIds);
+
+            if (OpRuntime.isInRuntime()) {
+                OpRuntime.getRuntime().setToken(token);
+            }
 
         } catch (ClientException cause) {
             throw new ThingPlatformException(

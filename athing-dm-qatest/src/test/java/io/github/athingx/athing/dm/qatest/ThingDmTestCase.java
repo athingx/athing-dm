@@ -1,8 +1,10 @@
 package io.github.athingx.athing.dm.qatest;
 
-import io.github.athingx.athing.dm.api.Identifier;
+import io.github.athingx.athing.dm.api.ThingDmEvent;
+import io.github.athingx.athing.dm.platform.message.ThingDmPostEventMessage;
 import io.github.athingx.athing.dm.platform.message.ThingDmPostPropertyMessage;
 import io.github.athingx.athing.dm.qatest.puppet.LightComp;
+import io.github.athingx.athing.dm.qatest.puppet.event.LightBrightChangedEventData;
 import io.github.athingx.athing.dm.thing.dump.DumpToFn;
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,6 +12,8 @@ import org.junit.Test;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import static io.github.athingx.athing.dm.api.Identifier.toIdentifier;
 
 public class ThingDmTestCase extends PuppetSupport {
 
@@ -26,9 +30,9 @@ public class ThingDmTestCase extends PuppetSupport {
 
     @Test
     public void test$thing$post_properties$success() throws Exception {
-        final var brightId = Identifier.toIdentifier("light", "bright");
-        final var stateId = Identifier.toIdentifier("light", "state");
-        final var colorId = Identifier.toIdentifier("light", "color");
+        final var brightId = toIdentifier("light", "bright");
+        final var stateId = toIdentifier("light", "state");
+        final var colorId = toIdentifier("light", "color");
         final String token = thingDm.properties(brightId, stateId, colorId).get().token();
         final ThingDmPostPropertyMessage message = waitingForPostMessageByToken(token);
         Assert.assertEquals(token, message.getToken());
@@ -43,6 +47,24 @@ public class ThingDmTestCase extends PuppetSupport {
         Assert.assertTrue(message.getPropertySnapshot(colorId).getValue() instanceof LightComp.Color);
     }
 
-
+    @Test
+    public void test$thing$post_event$success() throws Exception {
+        final var event = ThingDmEvent.event(
+                toIdentifier("light", "light_bright_changed_event"),
+                new LightBrightChangedEventData(50, 100)
+        );
+        final String token = thingDm.event(event).get().token();
+        final ThingDmPostEventMessage message = waitingForPostMessageByToken(token);
+        Assert.assertEquals(token, message.getToken());
+        Assert.assertEquals(PRODUCT_ID, message.getProductId());
+        Assert.assertEquals(THING_ID, message.getThingId());
+        Assert.assertTrue(message.getTimestamp() > 0);
+        Assert.assertTrue(message.getOccurTimestamp() > 0);
+        Assert.assertTrue(message.getData() instanceof LightBrightChangedEventData);
+        if (message.getData() instanceof LightBrightChangedEventData data) {
+            Assert.assertEquals(50, data.from());
+            Assert.assertEquals(100, data.to());
+        }
+    }
 
 }

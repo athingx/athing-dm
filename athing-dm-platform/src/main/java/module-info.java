@@ -2,6 +2,7 @@ module athing.dm.platform {
 
     exports io.github.athingx.athing.dm.platform;
     exports io.github.athingx.athing.dm.platform.domain;
+    exports io.github.athingx.athing.dm.platform.helper;
     exports io.github.athingx.athing.dm.platform.message;
     exports io.github.athingx.athing.dm.platform.builder;
 
