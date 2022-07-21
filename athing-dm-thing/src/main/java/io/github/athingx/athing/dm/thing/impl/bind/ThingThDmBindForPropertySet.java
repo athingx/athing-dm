@@ -51,8 +51,8 @@ public class ThingThDmBindForPropertySet implements ThingThDmBind<OpBinder> {
 
                     thing.op().data(topic + "_reply", OpReply.success(token, message))
                             .whenComplete(CompletableFutureUtils.whenCompleted(
-                                    v -> logger.debug("{}/op/property/set success; token={};identities={};", thing.path(), token, successIds),
-                                    ex -> logger.warn("{}/op/property/set failure; token={};identities={};", thing.path(), token, successIds, ex)
+                                    v -> logger.debug("{}/dm/property/set success; token={};identities={};", thing.path(), token, successIds),
+                                    ex -> logger.warn("{}/dm/property/set failure; token={};identities={};", thing.path(), token, successIds, ex)
                             ));
 
                 });

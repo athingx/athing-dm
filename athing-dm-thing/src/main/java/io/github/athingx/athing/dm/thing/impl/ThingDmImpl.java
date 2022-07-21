@@ -3,7 +3,6 @@ package io.github.athingx.athing.dm.thing.impl;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.api.ThingDmEvent;
-import io.github.athingx.athing.dm.common.meta.ThDmPropertyMeta;
 import io.github.athingx.athing.dm.common.util.MapData;
 import io.github.athingx.athing.dm.thing.ThingDm;
 import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
@@ -24,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.github.athingx.athing.thing.api.util.CompletableFutureUtils.whenCompleted;
@@ -76,14 +76,14 @@ public class ThingDmImpl implements ThingDm {
         for (final Identifier identifier : identifiers) {
 
             // 获取模块
-            final ThingDmCompContainer.Stub stub = container.get(identifier.getComponentId());
+            final var stub = container.get(identifier.getComponentId());
             if (null == stub) {
                 logger.warn("{}/dm/property/post ignored; comp not existed! token={};identity={};", thing.path(), token, identifier);
                 continue;
             }
 
             // 获取属性元数据
-            final ThDmPropertyMeta meta = stub.meta().getThDmPropertyMeta(identifier);
+            final var meta = stub.meta().getThDmPropertyMeta(identifier);
             if (null == meta) {
                 logger.warn("{}/dm/property/post ignored; property not existed! token={};identity={};", thing.path(), token, identifier);
                 continue;
@@ -92,9 +92,12 @@ public class ThingDmImpl implements ThingDm {
             // 获取属性值
             try {
                 final Object propertyValue = meta.getPropertyValue(stub.comp());
-                propertyDataMap.enterProperty(identifier.getIdentity())
-                        .putProperty("value", propertyValue)
-                        .putProperty("time", new Date());
+                propertyDataMap.putProperty(
+                        identifier.getIdentity(),
+                        new MapData()
+                                .putProperty("value", propertyValue)
+                                .putProperty("time", new Date())
+                );
 
                 // 记录下成功的属性
                 successes.add(identifier);
@@ -117,8 +120,8 @@ public class ThingDmImpl implements ThingDm {
                 )
                 .thenApply(reply -> OpReply.reply(reply.token(), reply.code(), reply.desc(), successes))
                 .whenComplete(whenCompleted(
-                        v -> logger.debug("{}/op/property/call success; token={};identities={};", thing.path(), token, successes),
-                        ex -> logger.warn("{}/op/property/call failure; token={};identities={};", thing.path(), token, successes, ex)
+                        v -> logger.debug("{}/dm/property/call success; token={};identities={};", thing.path(), token, successes),
+                        ex -> logger.warn("{}/dm/property/call failure; token={};identities={};", thing.path(), token, successes, ex)
                 ));
     }
 
@@ -136,10 +139,10 @@ public class ThingDmImpl implements ThingDm {
 
     @Override
     public DumpTo dump() {
-        @SuppressWarnings("unchecked") final Class<ThingDmComp>[] types = container.getThingDmCompSet()
+        final Set<Class<? extends ThingDmComp>> types = container.getThingDmCompSet()
                 .stream()
                 .map(ThingDmComp::getClass)
-                .toArray(Class[]::new);
+                .collect(Collectors.toSet());
         return new DumpTo() {
 
             @Override

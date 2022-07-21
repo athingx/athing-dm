@@ -17,7 +17,6 @@ import io.github.athingx.athing.dm.thing.impl.tsl.validator.TslValidator;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.gson.FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES;
@@ -42,25 +41,24 @@ public class TslDumper {
     // ---------- 以下为具体dump逻辑实现 ----------
     private final Collection<ThDmCompMeta> thDmCompMetas;
 
-    private TslDumper(String productId, ThDmCompMeta... thDmCompMetas) {
+    private TslDumper(String productId, Collection<ThDmCompMeta> thDmCompMetas) {
         this.productId = productId;
-        this.thDmCompMetas = Stream.of(thDmCompMetas).collect(Collectors.toList());
+        this.thDmCompMetas = new ArrayList<>(thDmCompMetas);
     }
 
     /**
      * dump TSL from ThingCom interface
      *
-     * @param productId          产品ID
+     * @param productId     产品ID
      * @param thingComTypes 组件接口
      * @return TSL content
      */
-    @SafeVarargs
-    public static Map<String, String> dump(String productId, Class<? extends ThingDmComp>... thingComTypes) {
+    public static Map<String, String> dump(String productId, Set<Class<? extends ThingDmComp>> thingComTypes) {
         final Map<String, ThDmCompMeta> metaMap = new LinkedHashMap<>();
-        Arrays.stream(thingComTypes)
+        thingComTypes.stream()
                 .map(ThDmMetaParser::parse)
                 .forEach(metaMap::putAll);
-        return new TslDumper(productId, metaMap.values().toArray(new ThDmCompMeta[0]))
+        return new TslDumper(productId, metaMap.values())
                 .dump();
     }
 
@@ -247,7 +245,7 @@ public class TslDumper {
         }
 
         // 转换方法服务参数
-        meta.getParameterMap().forEach((name, type)->{
+        meta.getParameterMap().forEach((name, type) -> {
             try {
                 element.getInputData().add(new TslDataElement(
                         name,

@@ -5,7 +5,7 @@ import io.github.athingx.athing.thing.api.op.OpData;
 
 public class MapOpData extends MapData implements OpData {
 
-    private final String token;
+    private transient final String token;
 
     public MapOpData(String token, MapData data) {
         this.token = token;

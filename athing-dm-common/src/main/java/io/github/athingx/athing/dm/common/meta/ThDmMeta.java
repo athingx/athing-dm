@@ -1,7 +1,5 @@
 package io.github.athingx.athing.dm.common.meta;
 
-import io.github.athingx.athing.dm.common.util.CommonUtils;
-
 import static io.github.athingx.athing.dm.common.util.CommonUtils.isBlankString;
 
 /**

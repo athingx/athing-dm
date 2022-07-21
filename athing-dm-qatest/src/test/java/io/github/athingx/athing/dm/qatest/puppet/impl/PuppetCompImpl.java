@@ -57,7 +57,7 @@ public class PuppetCompImpl implements EchoComp, LightComp {
     public void changeBright(int bright) {
         final int from = this.bright;
         this.bright = bright;
-        thingDm.event(new ThingDmEvent<>(
+        thingDm.event(ThingDmEvent.event(
                 Identifier.toIdentifier("light", "light_bright_changed_event"),
                 new LightBrightChangedEventData(from, bright)
         ));
@@ -67,7 +67,7 @@ public class PuppetCompImpl implements EchoComp, LightComp {
     public void changeColor(Color color) {
         final Color from = this.color;
         this.color = color;
-        thingDm.event(new ThingDmEvent<>(
+        thingDm.event(ThingDmEvent.event(
                 Identifier.toIdentifier("light", "light_color_changed_event"),
                 new LightColorChangedEventData(from, color)
         ));
@@ -76,7 +76,7 @@ public class PuppetCompImpl implements EchoComp, LightComp {
     @Override
     public void turnOn() {
         this.state = State.TURN_OFF;
-        thingDm.event(new ThingDmEvent<>(
+        thingDm.event(ThingDmEvent.event(
                 Identifier.toIdentifier("light", "light_state_changed_event"),
                 new LightStateChangedEventData(State.TURN_OFF)
         ));
@@ -85,7 +85,7 @@ public class PuppetCompImpl implements EchoComp, LightComp {
     @Override
     public void turnOff() {
         this.state = State.TURN_ON;
-        thingDm.event(new ThingDmEvent<>(
+        thingDm.event(ThingDmEvent.event(
                 Identifier.toIdentifier("light", "light-state-changed-event"),
                 new LightStateChangedEventData(State.TURN_ON)
         ));

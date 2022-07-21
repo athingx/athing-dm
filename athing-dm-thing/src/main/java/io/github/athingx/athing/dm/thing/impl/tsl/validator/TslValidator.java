@@ -223,7 +223,7 @@ public interface TslValidator {
                             }
 
                             // 校验元素名称：中文、大小写字母、日文、数字、短划线、下划线、斜杠和小数点，必须以中文、英文或数字开头，不超过 30 个字符
-                            if (!element.getName().matches("^[\\u4e00-\\u9fa5_a-zA-Z\\d][\\u4e00-\\u9fa5_a-zA-Z\\d_\\-/.]{1,29}")) {
+                            if (!element.getName().matches("^[\\u4e00-\\u9fa5_a-zA-Z\\d][\\u4e00-\\u9fa5_a-zA-Z\\d\\-/.]{1,29}")) {
                                 throw new TslValidatorException(String.format(
                                         "validate error, element name: \"%s\" is illegal at %s(%s)!",
                                         element.getName(),

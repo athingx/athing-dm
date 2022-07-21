@@ -109,7 +109,7 @@ abstract public class ThingThDmBindForService implements ThingThDmBind<OpBinder>
 
             // 处理异步返回
             if (returnObj instanceof CompletableFuture) {
-                @SuppressWarnings("unchecked") final CompletableFuture<Object> returnF = (CompletableFuture<Object>) returnObj;
+                @SuppressWarnings("unchecked") final var returnF = (CompletableFuture<Object>) returnObj;
                 return returnF;
             }
 

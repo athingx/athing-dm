@@ -2,6 +2,8 @@ package io.github.athingx.athing.dm.api;
 
 /**
  * 设备事件
+ *
+ * @param <T> 事件数据类型
  */
 public final class ThingDmEvent<T extends ThingDmData> {
 
@@ -57,6 +59,31 @@ public final class ThingDmEvent<T extends ThingDmData> {
      */
     public T getData() {
         return data;
+    }
+
+    /**
+     * 构建设备事件
+     *
+     * @param identifier 事件标识
+     * @param data       事件数据
+     * @param <T>        事件数据类型
+     * @return 设备事件
+     */
+    public static <T extends ThingDmData> ThingDmEvent<T> event(Identifier identifier, T data) {
+        return new ThingDmEvent<>(identifier, data);
+    }
+
+    /**
+     * 构建设备事件
+     *
+     * @param identifier  事件标识
+     * @param timestampMs 事件发生时间
+     * @param data        事件数据
+     * @param <T>         事件数据类型
+     * @return 设备事件
+     */
+    public static <T extends ThingDmData> ThingDmEvent<T> event(Identifier identifier, long timestampMs, T data) {
+        return new ThingDmEvent<>(identifier, timestampMs, data);
     }
 
 }

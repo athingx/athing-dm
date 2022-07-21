@@ -24,19 +24,19 @@ public final class Identifier implements Comparable<String>, CharSequence {
     /**
      * identity格式正则
      */
-    private static final String IDENTITY_REGEX = "^([A-z0-9_]{1,30}:)?[A-z0-9_]{1,50}$";
+    private static final String IDENTITY_REGEX = "^([A-z\\d_]{1,30}:)?[A-z\\d_]{1,50}$";
 
     /**
      * 组件ID格式正则
      * <p>英文大小写字母、数字和下划线，不超过30个字符</p>
      */
-    private static final String COMPONENT_ID_REGEX = "^[A-z0-9_]{1,30}$";
+    private static final String COMPONENT_ID_REGEX = "^[A-z\\d_]{1,30}$";
 
     /**
      * 成员ID格式正则
      * <p>英文大小写字母、数字和下划线，不超过50个字符</p>
      */
-    private static final String MEMBER_ID_REGEX = "^[A-z0-9_]{1,50}$";
+    private static final String MEMBER_ID_REGEX = "^[A-z\\d_]{1,50}$";
 
     /**
      * 默认组件ID

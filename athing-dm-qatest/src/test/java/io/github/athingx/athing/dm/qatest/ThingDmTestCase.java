@@ -26,9 +26,9 @@ public class ThingDmTestCase extends PuppetSupport {
 
     @Test
     public void test$thing$post_properties$success() throws Exception {
-        final Identifier brightId = Identifier.toIdentifier("light", "bright");
-        final Identifier stateId = Identifier.toIdentifier("light", "state");
-        final Identifier colorId = Identifier.toIdentifier("light", "color");
+        final var brightId = Identifier.toIdentifier("light", "bright");
+        final var stateId = Identifier.toIdentifier("light", "state");
+        final var colorId = Identifier.toIdentifier("light", "color");
         final String token = thingDm.properties(brightId, stateId, colorId).get().token();
         final ThingDmPostPropertyMessage message = waitingForPostMessageByToken(token);
         Assert.assertEquals(token, message.getToken());
@@ -42,5 +42,7 @@ public class ThingDmTestCase extends PuppetSupport {
         Assert.assertTrue(message.getPropertySnapshot(stateId).getValue() instanceof LightComp.State);
         Assert.assertTrue(message.getPropertySnapshot(colorId).getValue() instanceof LightComp.Color);
     }
+
+
 
 }
