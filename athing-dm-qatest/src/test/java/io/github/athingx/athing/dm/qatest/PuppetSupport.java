@@ -79,7 +79,6 @@ public class PuppetSupport implements LoadingProperties {
         new ThingDmPlatformBuilder()
                 .product(PRODUCT_ID, EchoComp.class, LightComp.class)
                 .build(platform);
-
         thingDm.load(new PuppetCompImpl(thingDm));
         thingDmTemplate = platform.genThingTemplate(ThingDmTemplate.class, PRODUCT_ID, THING_ID);
     }

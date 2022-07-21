@@ -86,7 +86,7 @@ public class PuppetCompImpl implements EchoComp, LightComp {
     public void turnOff() {
         this.state = State.TURN_ON;
         thingDm.event(ThingDmEvent.event(
-                Identifier.toIdentifier("light", "light-state-changed-event"),
+                Identifier.toIdentifier("light", "light_state_changed_event"),
                 new LightStateChangedEventData(State.TURN_ON)
         ));
     }
