@@ -5,7 +5,7 @@ package io.github.athingx.athing.dm.api;
  *
  * @param <T> 事件数据类型
  */
-public final class ThingDmEvent<T extends ThingDmData> {
+public class ThingDmEvent<T extends ThingDmData> {
 
     private final Identifier identifier;
     private final long occurTimestampMs;

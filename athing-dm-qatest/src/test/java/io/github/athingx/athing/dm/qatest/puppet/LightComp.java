@@ -2,15 +2,19 @@ package io.github.athingx.athing.dm.qatest.puppet;
 
 import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.api.annotation.*;
-import io.github.athingx.athing.dm.qatest.puppet.event.LightBrightChangedEventData;
-import io.github.athingx.athing.dm.qatest.puppet.event.LightColorChangedEventData;
-import io.github.athingx.athing.dm.qatest.puppet.event.LightStateChangedEventData;
+import io.github.athingx.athing.dm.qatest.puppet.event.LightBrightChangedEvent;
+import io.github.athingx.athing.dm.qatest.puppet.event.LightColorChangedEvent;
+import io.github.athingx.athing.dm.qatest.puppet.event.LightStateChangedEvent;
 
-@ThDmComp(id = "light")
-@ThDmEvent(id = "light_state_changed_event", type = LightStateChangedEventData.class)
-@ThDmEvent(id = "light_color_changed_event", type = LightColorChangedEventData.class)
-@ThDmEvent(id = "light_bright_changed_event", type = LightBrightChangedEventData.class)
+import static io.github.athingx.athing.dm.qatest.puppet.LightComp.ID;
+
+@ThDmComp(id = ID)
+@ThDmEvent(id = LightStateChangedEvent.ID, type = LightStateChangedEvent.Data.class)
+@ThDmEvent(id = LightColorChangedEvent.ID, type = LightColorChangedEvent.Data.class)
+@ThDmEvent(id = LightBrightChangedEvent.ID, type = LightBrightChangedEvent.Data.class)
 public interface LightComp extends ThingDmComp {
+
+    String ID = "light";
 
     @ThDmProperty
     int getBright();
