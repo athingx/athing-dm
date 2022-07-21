@@ -104,18 +104,20 @@ public class ThDmMetaParser {
                     // 构建服务元数据
                     final ThDmServiceMeta meta = new ThDmServiceMeta(
                             compId,
-                            anThDmService.id(),
+                            getThDmServiceId(anThDmService, service),
                             anThDmService.name(),
                             anThDmService.desc(),
                             anThDmService.isRequired(),
                             anThDmService.isSync(),
+                            service.getReturnType(),
                             getServiceActualReturnType(service),
-                            (comp, arguments) -> service.invoke(comp, anThDmService),
+                            service::invoke,
                             parameterMap
                     );
+                    meta.setMethod(service);
 
                     // 检查返回值是否为void或者实现了ThingData
-                    final Class<?> returnType = meta.getReturnType();
+                    final Class<?> returnType = meta.getActualReturnType();
                     if (returnType != void.class
                             && returnType != Void.class
                             && !ThingDmData.class.isAssignableFrom(returnType)) {
@@ -155,7 +157,7 @@ public class ThDmMetaParser {
                     // 构建属性元数据
                     final ThDmPropertyMeta meta = new ThDmPropertyMeta(
                             compId,
-                            anThDmProperty.id(),
+                            getThDmPropertyId(anThDmProperty, getter),
                             anThDmProperty.name(),
                             anThDmProperty.desc(),
                             anThDmProperty.isRequired(),
@@ -163,6 +165,9 @@ public class ThDmMetaParser {
                             getter::invoke,
                             null == setter ? null : setter::invoke
                     );
+                    meta.setMethodOfGetter(getter);
+                    meta.setMethodOfSetter(setter);
+
                     identityThPropertyMetaMap.put(meta.getIdentifier(), meta);
 
                 });

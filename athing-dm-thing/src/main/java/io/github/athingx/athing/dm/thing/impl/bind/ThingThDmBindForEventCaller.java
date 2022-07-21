@@ -1,5 +1,6 @@
 package io.github.athingx.athing.dm.thing.impl.bind;
 
+import com.google.gson.reflect.TypeToken;
 import io.github.athingx.athing.dm.thing.builder.ThingDmOption;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.*;
@@ -29,9 +30,11 @@ public class ThingThDmBindForEventCaller implements ThingThDmBind<OpCaller<OpDat
                 /*
                  * 这里需要过滤掉属性的应答，因为消息和属性的投递应答都用了同一个topic订阅表达式。
                  */
-                .matches(matchesTopic(topic -> topic.endsWith("/thing/event/property/post_reply")))
+                .matches(matchesTopic(topic -> !topic.endsWith("/thing/event/property/post_reply")))
                 .map(mappingJsonFromBytes(UTF_8))
-                .map(mappingOpReplyFromJson(Void.class))
+                .map(mappingOpReplyFromJson(new TypeToken<OpReply<Void>>(){
+
+                }))
                 .call(new OpBind.Option().setTimeoutMs(option.getEventTimeoutMs()), identity());
     }
 

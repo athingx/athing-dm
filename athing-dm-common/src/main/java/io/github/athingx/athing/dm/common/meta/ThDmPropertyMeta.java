@@ -3,6 +3,8 @@ package io.github.athingx.athing.dm.common.meta;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
 
+import java.lang.reflect.Method;
+
 
 /**
  * 设备组件属性元数据
@@ -14,6 +16,9 @@ public class ThDmPropertyMeta extends ThDmMeta {
     private final Class<?> propertyType;
     private final PropertyGetter<Object> getter;
     private final PropertySetter<Object> setter;
+
+    private Method methodOfGetter;
+    private Method methodOfSetter;
 
     /**
      * 属性元数据
@@ -41,6 +46,22 @@ public class ThDmPropertyMeta extends ThDmMeta {
         this.propertyType = propertyType;
         this.getter = getter;
         this.setter = setter;
+    }
+
+    public Method getMethodOfGetter() {
+        return methodOfGetter;
+    }
+
+    void setMethodOfGetter(Method methodOfGetter) {
+        this.methodOfGetter = methodOfGetter;
+    }
+
+    public Method getMethodOfSetter() {
+        return methodOfSetter;
+    }
+
+    void setMethodOfSetter(Method methodOfSetter) {
+        this.methodOfSetter = methodOfSetter;
     }
 
     /**

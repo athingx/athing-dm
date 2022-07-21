@@ -95,6 +95,7 @@
         <module>athing-dm-common</module>
         <module>athing-dm-thing</module>
         <module>athing-dm-platform</module>
+        <module>athing-dm-qatest</module>
     </modules>
 
     <dependencyManagement>

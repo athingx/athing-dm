@@ -3,12 +3,16 @@ package io.github.athingx.athing.dm.common.util;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.api.annotation.ThDmComp;
+import io.github.athingx.athing.dm.api.annotation.ThDmProperty;
+import io.github.athingx.athing.dm.api.annotation.ThDmService;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import static io.github.athingx.athing.dm.common.util.CommonUtils.isEmptyString;
 
 /**
  * 设备组件工具类
@@ -155,5 +159,16 @@ public class ThingDmCompUtils {
         return identifier.getMemberId().replaceAll("_", "-");
     }
 
+    public static String getThDmServiceId(ThDmService anThDmService, Method service) {
+        return isEmptyString(anThDmService.id())
+                ? dumpToLowerCaseUnderscore(service.getName())
+                : anThDmService.id();
+    }
+
+    public static String getThDmPropertyId(ThDmProperty anThDmProperty, Method getter) {
+        return isEmptyString(anThDmProperty.id())
+                ? dumpToLowerCaseUnderscore(getJavaBeanPropertyName(getter.getName()))
+                : anThDmProperty.id();
+    }
 
 }

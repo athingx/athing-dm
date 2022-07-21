@@ -1,5 +1,9 @@
 package io.github.athingx.athing.dm.common.meta;
 
+import io.github.athingx.athing.dm.common.util.CommonUtils;
+
+import static io.github.athingx.athing.dm.common.util.CommonUtils.isBlankString;
+
 /**
  * 元数据
  */
@@ -37,7 +41,7 @@ class ThDmMeta {
      * @return 名称
      */
     public String getName() {
-        return name;
+        return isBlankString(name) ? id : name;
     }
 
     /**

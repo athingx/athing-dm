@@ -25,7 +25,7 @@ public @interface ThDmComp {
      *
      * @return 组件名称
      */
-    String name();
+    String name() default "";
 
     /**
      * 组件描述

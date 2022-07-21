@@ -238,7 +238,7 @@ public class TslDumper {
 
         // 转换方法返回类型
         try {
-            element.getOutputData().addAll(dumpClass(meta.getReturnType()));
+            element.getOutputData().addAll(dumpClass(meta.getActualReturnType()));
         } catch (Exception cause) {
             throw new TslException(
                     "convert service: \"%s\" return type error!".formatted(identifier),

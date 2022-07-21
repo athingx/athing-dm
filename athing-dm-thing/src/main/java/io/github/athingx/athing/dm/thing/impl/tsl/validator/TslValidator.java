@@ -10,6 +10,7 @@ import io.github.athingx.athing.dm.thing.impl.tsl.specs.StructSpecs;
 
 import java.util.Arrays;
 
+import static io.github.athingx.athing.dm.common.util.CommonUtils.isBlankString;
 import static io.github.athingx.athing.dm.common.util.CommonUtils.isIn;
 import static io.github.athingx.athing.dm.thing.impl.tsl.specs.Specs.Type.*;
 
@@ -26,7 +27,6 @@ public interface TslValidator {
             validateStructSpecs(),
             validateElement()
     };
-
 
     /**
      * 全局校验器
@@ -199,22 +199,42 @@ public interface TslValidator {
      * @return 验证器
      */
     static TslValidator validateElement() {
-        return new BaseValidator((thElement, dataElement) -> {
+        return new BaseValidator((thElement, dataElement) ->
+                Arrays.stream(new TslElement[]{thElement, dataElement})
+                        .forEach(element -> {
 
-            // 校验元素标识是否命中保留词
-            Arrays.stream(new TslElement[]{thElement, dataElement})
-                    .forEach(element -> {
-                        if (isIn(element.getIdentity(), "set", "get", "post", "property", "event", "time", "value")) {
-                            throw new TslValidatorException(String.format(
-                                    "validate error, element identity not allow reserve keywords: \"%s\" in %s(%s)",
-                                    element.getIdentity(),
-                                    thElement,
-                                    dataElement
-                            ));
-                        }
-                    });
+                            // 校验元素标识是否命中保留词
+                            if (isIn(element.getIdentity(), "set", "get", "post", "property", "event", "time", "value")) {
+                                throw new TslValidatorException(String.format(
+                                        "validate error, element identity not allow reserve keywords: \"%s\" at %s(%s)",
+                                        element.getIdentity(),
+                                        thElement,
+                                        dataElement
+                                ));
+                            }
 
-        });
+                            // 校验元素名称是为空
+                            if (isBlankString(element.getName())) {
+                                throw new TslValidatorException(String.format(
+                                        "validate error, element name is required at %s(%s)!",
+                                        thElement,
+                                        dataElement
+                                ));
+                            }
+
+                            // 校验元素名称：中文、大小写字母、日文、数字、短划线、下划线、斜杠和小数点，必须以中文、英文或数字开头，不超过 30 个字符
+                            if (!element.getName().matches("^[\\u4e00-\\u9fa5_a-zA-Z\\d][\\u4e00-\\u9fa5_a-zA-Z\\d_\\-/.]{1,29}")) {
+                                throw new TslValidatorException(String.format(
+                                        "validate error, element name: \"%s\" is illegal at %s(%s)!",
+                                        element.getName(),
+                                        thElement,
+                                        dataElement
+                                ));
+                            }
+
+
+                        })
+        );
     }
 
 }

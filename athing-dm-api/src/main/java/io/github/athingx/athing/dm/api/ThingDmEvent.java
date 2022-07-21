@@ -3,7 +3,7 @@ package io.github.athingx.athing.dm.api;
 /**
  * 设备事件
  */
-public class ThingDmEvent<T extends ThingDmData> {
+public final class ThingDmEvent<T extends ThingDmData> {
 
     private final Identifier identifier;
     private final long occurTimestampMs;

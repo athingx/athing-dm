@@ -1,5 +1,6 @@
 package io.github.athingx.athing.dm.thing.impl.bind;
 
+import com.google.gson.reflect.TypeToken;
 import io.github.athingx.athing.dm.thing.builder.ThingDmOption;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.*;
@@ -26,7 +27,9 @@ public class ThingThDmBindForPropertyCaller implements ThingThDmBind<OpCaller<Op
         return group
                 .bind("/sys/%s/thing/event/property/post_reply".formatted(thing.path().toURN()))
                 .map(mappingJsonFromBytes(UTF_8))
-                .map(mappingOpReplyFromJson(Void.class))
+                .map(mappingOpReplyFromJson(new TypeToken<OpReply<Void>>() {
+
+                }))
                 .call(new OpBind.Option().setTimeoutMs(option.getPropertyTimeoutMs()), identity());
     }
 

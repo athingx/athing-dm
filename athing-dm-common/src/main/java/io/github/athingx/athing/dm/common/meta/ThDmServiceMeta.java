@@ -3,6 +3,7 @@ package io.github.athingx.athing.dm.common.meta;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
 
+import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 
 
@@ -15,21 +16,25 @@ public class ThDmServiceMeta extends ThDmMeta {
     private final boolean required;
     private final boolean sync;
     private final Class<?> returnType;
+    private final Class<?> actualReturnType;
     private final ServiceInvoker<Object> invoker;
     private final LinkedHashMap<String, Class<?>> parameterMap;
+
+    private Method method;
 
     /**
      * 服务元数据
      *
-     * @param compId       组件ID
-     * @param id           ID
-     * @param name         名称
-     * @param desc         描述
-     * @param required     是否必须
-     * @param sync         是否同步
-     * @param returnType   返回值类型
-     * @param invoker      服务调用
-     * @param parameterMap 参数类型集合
+     * @param compId           组件ID
+     * @param id               ID
+     * @param name             名称
+     * @param desc             描述
+     * @param required         是否必须
+     * @param sync             是否同步
+     * @param returnType       返回值类型
+     * @param actualReturnType 真实返回值类型
+     * @param invoker          服务调用
+     * @param parameterMap     参数类型集合
      */
     public ThDmServiceMeta(final String compId,
                            final String id,
@@ -38,6 +43,7 @@ public class ThDmServiceMeta extends ThDmMeta {
                            final boolean required,
                            final boolean sync,
                            final Class<?> returnType,
+                           final Class<?> actualReturnType,
                            final ServiceInvoker<Object> invoker,
                            final LinkedHashMap<String, Class<?>> parameterMap) {
         super(id, name, desc);
@@ -45,8 +51,17 @@ public class ThDmServiceMeta extends ThDmMeta {
         this.required = required;
         this.sync = sync;
         this.returnType = returnType;
+        this.actualReturnType = actualReturnType;
         this.invoker = invoker;
         this.parameterMap = parameterMap;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    void setMethod(Method method) {
+        this.method = method;
     }
 
     /**
@@ -92,6 +107,17 @@ public class ThDmServiceMeta extends ThDmMeta {
      */
     public Class<?> getReturnType() {
         return returnType;
+    }
+
+    /**
+     * 获取实际的返回类型
+     * <li>1. 如果是CompletableFuture{@code <V>}，实际的返回类型应该为V</li>
+     * <li>2. 如果是其他类型，则等同于{@link #getReturnType()}</li>
+     *
+     * @return 实际返回类型
+     */
+    public Class<?> getActualReturnType() {
+        return actualReturnType;
     }
 
     /**

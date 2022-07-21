@@ -57,6 +57,7 @@ class DefineThDmServiceImpl extends DefineThDmImpl<DefineThDmService> implements
                 required,
                 sync,
                 returnType,
+                returnType,
                 invoker::invoke,
                 new LinkedHashMap<>(parameters)
         );
