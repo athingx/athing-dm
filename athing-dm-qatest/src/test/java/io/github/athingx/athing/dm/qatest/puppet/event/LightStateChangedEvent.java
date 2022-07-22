@@ -13,16 +13,7 @@ public class LightStateChangedEvent extends ThingDmEvent<LightStateChangedEvent.
         super(Identifier.toIdentifier(LightComp.ID, ID), new Data(state));
     }
 
-    public static class Data implements ThingDmData {
-        private final LightComp.State state;
-
-        public Data(LightComp.State state) {
-            this.state = state;
-        }
-
-        public LightComp.State getState() {
-            return state;
-        }
+    public record Data(LightComp.State state) implements ThingDmData {
     }
 
 }

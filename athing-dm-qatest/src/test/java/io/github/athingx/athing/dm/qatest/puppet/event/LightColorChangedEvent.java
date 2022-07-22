@@ -13,22 +13,7 @@ public class LightColorChangedEvent extends ThingDmEvent<LightColorChangedEvent.
         super(Identifier.toIdentifier(LightComp.ID, ID), new Data(from, to));
     }
 
-    public static class Data implements ThingDmData {
-        private final LightComp.Color from;
-        private final LightComp.Color to;
-
-        public Data(LightComp.Color from, LightComp.Color to) {
-            this.from = from;
-            this.to = to;
-        }
-
-        public LightComp.Color getFrom() {
-            return from;
-        }
-
-        public LightComp.Color getTo() {
-            return to;
-        }
+    public record Data(LightComp.Color from, LightComp.Color to) implements ThingDmData {
     }
 
 }

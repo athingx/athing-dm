@@ -13,23 +13,7 @@ public class LightBrightChangedEvent extends ThingDmEvent<LightBrightChangedEven
         super(Identifier.toIdentifier(LightComp.ID, ID), new Data(from, to));
     }
 
-    public static class Data implements ThingDmData {
-
-        private final int from;
-        private final int to;
-
-        public Data(int from, int to) {
-            this.from = from;
-            this.to = to;
-        }
-
-        public int getFrom() {
-            return from;
-        }
-
-        public int getTo() {
-            return to;
-        }
+    public record Data(int from, int to) implements ThingDmData {
 
     }
 

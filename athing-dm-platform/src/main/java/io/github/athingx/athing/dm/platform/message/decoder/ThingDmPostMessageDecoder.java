@@ -165,20 +165,12 @@ public class ThingDmPostMessageDecoder implements ThingMessageDecoder<ThingDmPos
     /**
      * 上报
      */
-    private static class Post {
-
-        @SerializedName("productKey")
-        String productId;
-
-        @SerializedName("deviceName")
-        String thingId;
-
-        @SerializedName("gmtCreate")
-        long timestamp;
-
-        @SerializedName("requestId")
-        String token;
-
+    private record Post(
+            @SerializedName("productKey") String productId,
+            @SerializedName("deviceName") String thingId,
+            @SerializedName("gmtCreate") long timestamp,
+            @SerializedName("requestId") String token
+    ) {
     }
 
 }

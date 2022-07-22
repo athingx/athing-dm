@@ -58,8 +58,8 @@ public class ThingDmTestCase extends PuppetSupport {
         Assert.assertTrue(message.getOccurTimestamp() > 0);
         Assert.assertTrue(message.getData() instanceof LightBrightChangedEvent.Data);
         if (message.getData() instanceof LightBrightChangedEvent.Data data) {
-            Assert.assertEquals(50, data.getFrom());
-            Assert.assertEquals(100, data.getTo());
+            Assert.assertEquals(50, data.from());
+            Assert.assertEquals(100, data.to());
         }
     }
 

@@ -12,7 +12,6 @@ import io.github.athingx.athing.dm.qatest.puppet.impl.PuppetCompImpl;
 import io.github.athingx.athing.dm.thing.ThingDm;
 import io.github.athingx.athing.dm.thing.builder.ThingDmBuilder;
 import io.github.athingx.athing.platform.api.ThingPlatform;
-import io.github.athingx.athing.platform.api.message.ThingMessageListener;
 import io.github.athingx.athing.platform.api.message.ThingReplyMessage;
 import io.github.athingx.athing.platform.builder.ThingPlatformBuilder;
 import io.github.athingx.athing.platform.builder.client.AliyunIAcsClientFactory;
@@ -43,29 +42,23 @@ public class PuppetSupport implements LoadingProperties {
         thing = new ThingBuilder(new ThingPath(PRODUCT_ID, THING_ID))
                 .client(new AliyunMqttClientFactory()
                         .remote(THING_REMOTE)
-                        .secret(THING_SECRET)
-                )
+                        .secret(THING_SECRET))
                 .build();
         platform = new ThingPlatformBuilder()
                 .client(new AliyunIAcsClientFactory()
                         .identity(PLATFORM_IDENTITY)
-                        .secret(PLATFORM_SECRET)
-                )
+                        .secret(PLATFORM_SECRET))
                 .consumer(new AliyunThingMessageConsumerFactory()
                         .queue(PLATFORM_JMS_GROUP)
                         .connection(new AliyunJmsConnectionFactory()
                                 .queue(PLATFORM_JMS_GROUP)
                                 .remote(PLATFORM_REMOTE)
                                 .identity(PLATFORM_IDENTITY)
-                                .secret(PLATFORM_SECRET)
-                        )
+                                .secret(PLATFORM_SECRET))
                         .listener(new QaThingMessageGroupListener(
-                                new ThingMessageListener[]{
-                                        qaThingPostMessageListener,
-                                        qaThingReplyMessageListener
-                                }
-                        ))
-                )
+                                qaThingPostMessageListener,
+                                qaThingReplyMessageListener
+                        )))
                 .build();
 
         setup(thing, platform);

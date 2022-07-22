@@ -7,7 +7,7 @@ public class QaThingMessageGroupListener implements ThingMessageListener {
 
     private final ThingMessageListener[] group;
 
-    public QaThingMessageGroupListener(ThingMessageListener[] group) {
+    public QaThingMessageGroupListener(ThingMessageListener... group) {
         this.group = group;
     }
 
