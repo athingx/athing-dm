@@ -11,17 +11,17 @@ import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mapping
 import static io.github.athingx.athing.thing.api.function.ThingFnMatcher.matchesTopic;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingThDmBindForServiceAsync extends ThingThDmBindForService {
+public class BindingForForServiceAsync extends BindingForForService {
 
     private final Thing thing;
 
-    public ThingThDmBindForServiceAsync(Thing thing, ThingDmCompContainer container) {
+    public BindingForForServiceAsync(Thing thing, ThingDmCompContainer container) {
         super(thing, container);
         this.thing = thing;
     }
 
     @Override
-    public CompletableFuture<OpBinder> bind(OpGroupBind group) {
+    public CompletableFuture<OpBinder> binding(OpGroupBind group) {
         return group.bind("/sys/%s/thing/service/+".formatted(thing.path().toURN()))
 
                 /*

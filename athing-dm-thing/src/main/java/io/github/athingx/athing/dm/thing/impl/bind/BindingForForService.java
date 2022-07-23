@@ -19,13 +19,13 @@ import static io.github.athingx.athing.thing.api.util.CompletableFutureUtils.whe
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.failedFuture;
 
-abstract public class ThingThDmBindForService implements ThingThDmBind<OpBinder>, ThingDmCodes {
+abstract public class BindingForForService implements BindingFor<OpBinder>, ThingDmCodes {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
     private final ThingDmCompContainer container;
 
-    protected ThingThDmBindForService(Thing thing, ThingDmCompContainer container) {
+    protected BindingForForService(Thing thing, ThingDmCompContainer container) {
         this.thing = thing;
         this.container = container;
     }

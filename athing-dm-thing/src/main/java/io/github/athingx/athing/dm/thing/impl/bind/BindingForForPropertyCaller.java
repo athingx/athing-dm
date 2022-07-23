@@ -11,18 +11,18 @@ import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mapping
 import static io.github.athingx.athing.thing.api.function.ThingFnMapOpReply.mappingOpReplyFromJson;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingThDmBindForPropertyCaller implements ThingThDmBind<OpCaller<OpData, OpReply<Void>>> {
+public class BindingForForPropertyCaller implements BindingFor<OpCaller<OpData, OpReply<Void>>> {
 
     private final Thing thing;
     private final ThingDmOption option;
 
-    public ThingThDmBindForPropertyCaller(Thing thing, ThingDmOption option) {
+    public BindingForForPropertyCaller(Thing thing, ThingDmOption option) {
         this.thing = thing;
         this.option = option;
     }
 
     @Override
-    public CompletableFuture<OpCaller<OpData, OpReply<Void>>> bind(OpGroupBind group) {
+    public CompletableFuture<OpCaller<OpData, OpReply<Void>>> binding(OpGroupBind group) {
         return group
                 .bind("/sys/%s/thing/event/property/post_reply".formatted(thing.path().toURN()))
                 .map(mappingJsonFromBytes(UTF_8))

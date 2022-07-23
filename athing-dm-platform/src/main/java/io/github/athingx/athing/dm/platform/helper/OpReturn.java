@@ -1,7 +1,7 @@
 package io.github.athingx.athing.dm.platform.helper;
 
 /**
- * Op返回
+ * 操作返回
  *
  * @param <T> 返回值类型
  */

@@ -10,17 +10,17 @@ import java.util.concurrent.CompletableFuture;
 import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mappingJsonFromBytes;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingThDmBindForServiceSync extends ThingThDmBindForService {
+public class BindingForForServiceSync extends BindingForForService {
 
     private final Thing thing;
 
-    public ThingThDmBindForServiceSync(Thing thing, ThingDmCompContainer container) {
+    public BindingForForServiceSync(Thing thing, ThingDmCompContainer container) {
         super(thing, container);
         this.thing = thing;
     }
 
     @Override
-    public CompletableFuture<OpBinder> bind(OpGroupBind group) {
+    public CompletableFuture<OpBinder> binding(OpGroupBind group) {
         return group
                 .bind("/ext/rrpc/+/sys/%s/thing/service/+".formatted(thing.path().toURN()))
                 .map(mappingJsonFromBytes(UTF_8))

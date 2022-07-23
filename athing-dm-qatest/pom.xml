@@ -44,13 +44,13 @@
         <dependency>
             <groupId>io.github.athingx.athing</groupId>
             <artifactId>athing-thing</artifactId>
-            <version>${project.version}</version>
+            <version>${athing.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.github.athingx.athing</groupId>
             <artifactId>athing-platform</artifactId>
-            <version>${project.version}</version>
+            <version>${athing.version}</version>
             <scope>test</scope>
         </dependency>
 
