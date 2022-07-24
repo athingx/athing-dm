@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.athingx.athing.thing.api.util.CompletableFutureUtils.whenCompleted;
+import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.whenCompleted;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.failedFuture;
 

@@ -7,7 +7,7 @@ import io.github.athingx.athing.thing.api.op.OpGroupBind;
 
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mappingJsonFromBytes;
+import static io.github.athingx.athing.thing.api.function.ThingFn.mappingJsonFromByte;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BindingForForServiceSync extends BindingForForService {
@@ -23,7 +23,7 @@ public class BindingForForServiceSync extends BindingForForService {
     public CompletableFuture<OpBinder> binding(OpGroupBind group) {
         return group
                 .bind("/ext/rrpc/+/sys/%s/thing/service/+".formatted(thing.path().toURN()))
-                .map(mappingJsonFromBytes(UTF_8))
+                .map(mappingJsonFromByte(UTF_8))
                 .bind((topic, message) -> service(true, topic, message));
     }
 

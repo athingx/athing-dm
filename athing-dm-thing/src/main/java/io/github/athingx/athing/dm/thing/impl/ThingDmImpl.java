@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.github.athingx.athing.thing.api.util.CompletableFutureUtils.whenCompleted;
+import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.whenCompleted;
 
 public class ThingDmImpl implements ThingDm {
 

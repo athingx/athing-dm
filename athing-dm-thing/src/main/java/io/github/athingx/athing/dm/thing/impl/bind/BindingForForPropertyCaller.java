@@ -6,9 +6,7 @@ import io.github.athingx.athing.thing.api.op.*;
 
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.athingx.athing.thing.api.function.ThingFnMap.identity;
-import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mappingJsonFromBytes;
-import static io.github.athingx.athing.thing.api.function.ThingFnMapOpReply.mappingOpReplyFromJson;
+import static io.github.athingx.athing.thing.api.function.ThingFn.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BindingForForPropertyCaller implements BindingFor<OpCaller<OpData, OpReply<Void>>> {
@@ -25,8 +23,8 @@ public class BindingForForPropertyCaller implements BindingFor<OpCaller<OpData, 
     public CompletableFuture<OpCaller<OpData, OpReply<Void>>> binding(OpGroupBind group) {
         return group
                 .bind("/sys/%s/thing/event/property/post_reply".formatted(thing.path().toURN()))
-                .map(mappingJsonFromBytes(UTF_8))
-                .map(mappingOpReplyFromJson(Void.class))
+                .map(mappingJsonFromByte(UTF_8))
+                .map(mappingJsonToOpReply(Void.class))
                 .call(new OpBind.Option().setTimeoutMs(option.getPropertyTimeoutMs()), identity());
     }
 

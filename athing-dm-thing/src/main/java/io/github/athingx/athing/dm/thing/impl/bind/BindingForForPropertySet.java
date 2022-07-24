@@ -12,7 +12,6 @@ import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpBinder;
 import io.github.athingx.athing.thing.api.op.OpGroupBind;
 import io.github.athingx.athing.thing.api.op.OpReply;
-import io.github.athingx.athing.thing.api.util.CompletableFutureUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mappingJsonFromBytes;
+import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.whenCompleted;
+import static io.github.athingx.athing.thing.api.function.ThingFn.mappingJsonFromByte;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BindingForForPropertySet implements BindingFor<OpBinder> {
@@ -39,7 +39,7 @@ public class BindingForForPropertySet implements BindingFor<OpBinder> {
     public CompletableFuture<OpBinder> binding(OpGroupBind group) {
         return group
                 .bind("/sys/%s/thing/service/property/set".formatted(thing.path().toURN()))
-                .map(mappingJsonFromBytes(UTF_8))
+                .map(mappingJsonFromByte(UTF_8))
                 .bind((topic, json) -> {
 
                     final JsonObject requestJsonObject = JsonParser.parseString(json).getAsJsonObject();
@@ -50,7 +50,7 @@ public class BindingForForPropertySet implements BindingFor<OpBinder> {
                     }});
 
                     thing.op().data(topic + "_reply", OpReply.success(token, message))
-                            .whenComplete(CompletableFutureUtils.whenCompleted(
+                            .whenComplete(whenCompleted(
                                     v -> logger.debug("{}/dm/property/set success; token={};identities={};", thing.path(), token, successIds),
                                     ex -> logger.warn("{}/dm/property/set failure; token={};identities={};", thing.path(), token, successIds, ex)
                             ));

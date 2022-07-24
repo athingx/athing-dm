@@ -6,10 +6,7 @@ import io.github.athingx.athing.thing.api.op.*;
 
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.athingx.athing.thing.api.function.ThingFnMap.identity;
-import static io.github.athingx.athing.thing.api.function.ThingFnMapJson.mappingJsonFromBytes;
-import static io.github.athingx.athing.thing.api.function.ThingFnMapOpReply.mappingOpReplyFromJson;
-import static io.github.athingx.athing.thing.api.function.ThingFnMatcher.matchesTopic;
+import static io.github.athingx.athing.thing.api.function.ThingFn.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BindingForForEventCaller implements BindingFor<OpCaller<OpData, OpReply<Void>>> {
@@ -29,9 +26,9 @@ public class BindingForForEventCaller implements BindingFor<OpCaller<OpData, OpR
                 /*
                  * 这里需要过滤掉属性的应答，因为消息和属性的投递应答都用了同一个topic订阅表达式。
                  */
-                .matches(matchesTopic(topic -> !topic.endsWith("/thing/event/property/post_reply")))
-                .map(mappingJsonFromBytes(UTF_8))
-                .map(mappingOpReplyFromJson(Void.class))
+                .matches(matchingTopic(topic -> !topic.endsWith("/thing/event/property/post_reply")))
+                .map(mappingJsonFromByte(UTF_8))
+                .map(mappingJsonToOpReply(Void.class))
                 .call(new OpBind.Option().setTimeoutMs(option.getEventTimeoutMs()), identity());
     }
 

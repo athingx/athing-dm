@@ -13,7 +13,7 @@ import io.github.athingx.athing.thing.api.op.OpReply;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import static io.github.athingx.athing.thing.api.util.CompletableFutureUtils.tryCatchCompleted;
+import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.tryCatchComplete;
 
 public class ThingDmBuilder {
 
@@ -49,7 +49,7 @@ public class ThingDmBuilder {
         // 提交绑定
         return group
                 .commit()
-                .thenCompose(binder -> tryCatchCompleted(() -> new ThingDmImpl(
+                .thenCompose(binder -> tryCatchComplete(() -> new ThingDmImpl(
                         thing,
                         container,
                         eCallerFuture.get(),
