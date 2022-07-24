@@ -1,7 +1,5 @@
 package io.github.athingx.athing.dm.qatest.puppet.impl;
 
-import io.github.athingx.athing.dm.api.Identifier;
-import io.github.athingx.athing.dm.api.ThingDmEvent;
 import io.github.athingx.athing.dm.qatest.puppet.EchoComp;
 import io.github.athingx.athing.dm.qatest.puppet.LightComp;
 import io.github.athingx.athing.dm.qatest.puppet.event.LightBrightChangedEvent;
