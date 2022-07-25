@@ -137,6 +137,16 @@ public class ThingDmImpl implements ThingDm {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends ThingDmComp> T comp(String compId, Class<T> type) {
+        final var stub = container.get(compId);
+        if(null != stub && type.isInstance(stub.comp())) {
+            return (T) stub.comp();
+        }
+        return null;
+    }
+
     @Override
     public DumpTo dump() {
         final Set<Class<? extends ThingDmComp>> types = container.getThingDmCompSet()

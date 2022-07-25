@@ -49,6 +49,16 @@ public interface ThingDm {
     void load(ThingDmComp... comps);
 
     /**
+     * 获取设备组件
+     *
+     * @param compId 组件ID
+     * @param type   组件类型
+     * @param <T>    组件类型
+     * @return 设备组件
+     */
+    <T extends ThingDmComp> T comp(String compId, Class<T> type);
+
+    /**
      * 导出当前设备模型
      *
      * @return 导出处理
