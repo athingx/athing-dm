@@ -12,7 +12,7 @@ import io.github.athingx.athing.dm.thing.impl.define.DefineThDmCompImpl;
 import io.github.athingx.athing.dm.thing.impl.tsl.TslDumper;
 import io.github.athingx.athing.dm.thing.impl.util.MapOpData;
 import io.github.athingx.athing.thing.api.Thing;
-import io.github.athingx.athing.thing.api.op.OpCaller;
+import io.github.athingx.athing.thing.api.op.OpCall;
 import io.github.athingx.athing.thing.api.op.OpData;
 import io.github.athingx.athing.thing.api.op.OpReply;
 import org.slf4j.Logger;
@@ -32,14 +32,14 @@ public class ThingDmImpl implements ThingDm {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
-    private final OpCaller<OpData, OpReply<Void>> eCaller;
-    private final OpCaller<OpData, OpReply<Void>> pCaller;
+    private final OpCall<OpData, OpReply<Void>> eCaller;
+    private final OpCall<OpData, OpReply<Void>> pCaller;
     private final ThingDmCompContainer container;
 
     public ThingDmImpl(final Thing thing,
                        final ThingDmCompContainer container,
-                       final OpCaller<OpData, OpReply<Void>> eCaller,
-                       final OpCaller<OpData, OpReply<Void>> pCaller) {
+                       final OpCall<OpData, OpReply<Void>> eCaller,
+                       final OpCall<OpData, OpReply<Void>> pCaller) {
         this.thing = thing;
         this.container = container;
         this.eCaller = eCaller;
@@ -50,7 +50,7 @@ public class ThingDmImpl implements ThingDm {
     public CompletableFuture<OpReply<Void>> event(ThingDmEvent<?> event) {
         final String identity = event.getIdentifier().getIdentity();
         final String token = thing.op().genToken();
-        return eCaller.call("/sys/%s/thing/event/%s/post".formatted(thing.path().toURN(), identity),
+        return eCaller.calling("/sys/%s/thing/event/%s/post".formatted(thing.path().toURN(), identity),
                         new MapOpData(token, new MapData()
                                 .putProperty("id", token)
                                 .putProperty("version", "1.0")
@@ -110,7 +110,7 @@ public class ThingDmImpl implements ThingDm {
 
         }
 
-        return pCaller.call("/sys/%s/thing/event/property/post".formatted(thing.path().toURN()),
+        return pCaller.calling("/sys/%s/thing/event/property/post".formatted(thing.path().toURN()),
                         new MapOpData(token, new MapData()
                                 .putProperty("id", token)
                                 .putProperty("version", "1.0")

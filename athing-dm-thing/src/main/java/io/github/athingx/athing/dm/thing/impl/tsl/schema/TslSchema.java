@@ -39,29 +39,13 @@ public abstract class TslSchema {
     /**
      * Schema概述
      */
-    public static class Profile {
+    public record Profile(
+            @SerializedName("productKey") String productId,
+            @SerializedName("version") String version
+    ) {
 
         public static final String MAIN_TSL_PROFILE_VERSION = "1.5";
         public static final String SUB_TSL_PROFILE_VERSION = "1.0";
-
-        @SerializedName("productKey")
-        private final String productId;
-
-        @SerializedName("version")
-        private final String version;
-
-        public Profile(String productId, String version) {
-            this.productId = productId;
-            this.version = version;
-        }
-
-        public String getProductId() {
-            return productId;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
+        
     }
 }

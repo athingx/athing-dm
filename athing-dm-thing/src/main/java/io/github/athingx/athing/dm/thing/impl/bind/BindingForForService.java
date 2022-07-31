@@ -8,7 +8,8 @@ import io.github.athingx.athing.dm.common.ThingDmCodes;
 import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
-import io.github.athingx.athing.thing.api.op.OpBinder;
+import io.github.athingx.athing.thing.api.op.OpBind;
+import io.github.athingx.athing.thing.api.op.OpGroupBindFor;
 import io.github.athingx.athing.thing.api.op.OpReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.wh
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.failedFuture;
 
-abstract public class BindingForForService implements BindingFor<OpBinder>, ThingDmCodes {
+abstract public class BindingForForService implements OpGroupBindFor<OpBind>, ThingDmCodes {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;

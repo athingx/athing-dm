@@ -32,8 +32,8 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
             Assert.assertFalse(future.isCancelled());
             Assert.assertFalse(future.isCompletedExceptionally());
         });
-        final ThingDmReplyServiceReturnMessage message = waitingForReplyMessageByToken(opReturn.getToken());
-        Assert.assertEquals(opReturn.getToken(), message.getToken());
+        final ThingDmReplyServiceReturnMessage message = waitingForReplyMessageByToken(opReturn.token());
+        Assert.assertEquals(opReturn.token(), message.getToken());
         Assert.assertEquals(PRODUCT_ID, message.getProductId());
         Assert.assertEquals(THING_ID, message.getThingId());
         Assert.assertTrue(message.getTimestamp() > 0);
@@ -50,8 +50,8 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
 
         final var lightComp = thingDmTemplate.getThingDmComp("light", LightComp.class);
         final OpReturn<Void> opReturn = OpReturnHelper.getOpEmptyReturn(() -> lightComp.setColor(LightComp.Color.YELLOW));
-        final ThingDmReplyPropertySetMessage message = waitingForReplyMessageByToken(opReturn.getToken());
-        Assert.assertEquals(opReturn.getToken(), message.getToken());
+        final ThingDmReplyPropertySetMessage message = waitingForReplyMessageByToken(opReturn.token());
+        Assert.assertEquals(opReturn.token(), message.getToken());
         Assert.assertEquals(PRODUCT_ID, message.getProductId());
         Assert.assertEquals(THING_ID, message.getThingId());
         Assert.assertTrue(message.getTimestamp() > 0);
@@ -68,8 +68,8 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
                     put(colorId, LightComp.Color.PINK);
                 }}));
 
-        final ThingDmReplyPropertySetMessage message = waitingForReplyMessageByToken(opReturn.getToken());
-        Assert.assertEquals(opReturn.getToken(), message.getToken());
+        final ThingDmReplyPropertySetMessage message = waitingForReplyMessageByToken(opReturn.token());
+        Assert.assertEquals(opReturn.token(), message.getToken());
         Assert.assertEquals(PRODUCT_ID, message.getProductId());
         Assert.assertEquals(THING_ID, message.getThingId());
         Assert.assertTrue(message.getTimestamp() > 0);
@@ -83,7 +83,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         // 设置颜色为蓝色
         final var lightComp = thingDmTemplate.getThingDmComp("light", LightComp.class);
         final OpReturn<Void> opReturn = OpReturnHelper.getOpEmptyReturn(() -> lightComp.setColor(LightComp.Color.BLUE));
-        Assert.assertNotNull(waitingForReplyMessageByToken(opReturn.getToken()));
+        Assert.assertNotNull(waitingForReplyMessageByToken(opReturn.token()));
 
         // 让设备主动上报颜色
         final var colorId = toIdentifier("light", "color");
@@ -103,7 +103,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         // 设置颜色为粉红
         final var lightComp = thingDmTemplate.getThingDmComp("light", LightComp.class);
         final OpReturn<Void> opReturn = OpReturnHelper.getOpEmptyReturn(() -> lightComp.setColor(LightComp.Color.PINK));
-        Assert.assertNotNull(waitingForReplyMessageByToken(opReturn.getToken()));
+        Assert.assertNotNull(waitingForReplyMessageByToken(opReturn.token()));
 
         // 让设备主动上报颜色
         final var colorId = toIdentifier("light", "color");

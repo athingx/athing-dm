@@ -32,7 +32,7 @@ public class TslMainSchema extends TslSchema {
                 meta.getId(),
                 meta.getName(),
                 meta.getDesc(),
-                getProfile().getProductId()
+                getProfile().productId()
         );
         final TslSubSchema schema = new TslSubSchema(fnBlock);
         functionBlocks.add(fnBlock);
@@ -43,42 +43,11 @@ public class TslMainSchema extends TslSchema {
     /**
      * 方法功能块
      */
-    public static class FunctionBlock {
-
-        @SerializedName("functionBlockId")
-        private final String componentId;
-
-        @SerializedName("functionBlockName")
-        private final String name;
-
-        @SerializedName("description")
-        private final String desc;
-
-        @SerializedName("productKey")
-        private final String productId;
-
-        public FunctionBlock(String componentId, String name, String desc, String productId) {
-            this.componentId = componentId;
-            this.name = name;
-            this.desc = desc;
-            this.productId = productId;
-        }
-
-        public String getComponentId() {
-            return componentId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
-
-        public String getProductId() {
-            return productId;
-        }
-
+    public record FunctionBlock(
+            @SerializedName("functionBlockId") String componentId,
+            @SerializedName("functionBlockName") String name,
+            @SerializedName("description") String desc,
+            @SerializedName("productKey") String productId
+    ) {
     }
 }

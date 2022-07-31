@@ -14,9 +14,9 @@ public class TslSubSchema extends TslSchema {
     private final String componentName;
 
     public TslSubSchema(TslMainSchema.FunctionBlock block) {
-        super(new Profile(block.getProductId(), Profile.SUB_TSL_PROFILE_VERSION));
-        this.componentId = block.getComponentId();
-        this.componentName = block.getName();
+        super(new Profile(block.productId(), Profile.SUB_TSL_PROFILE_VERSION));
+        this.componentId = block.componentId();
+        this.componentName = block.name();
     }
 
     public String getComponentId() {

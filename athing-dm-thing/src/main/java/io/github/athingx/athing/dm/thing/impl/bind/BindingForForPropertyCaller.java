@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import static io.github.athingx.athing.thing.api.function.ThingFn.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class BindingForForPropertyCaller implements BindingFor<OpCaller<OpData, OpReply<Void>>> {
+public class BindingForForPropertyCaller implements OpGroupBindFor<OpCall<OpData, OpReply<Void>>> {
 
     private final Thing thing;
     private final ThingDmOption option;
@@ -20,12 +20,12 @@ public class BindingForForPropertyCaller implements BindingFor<OpCaller<OpData, 
     }
 
     @Override
-    public CompletableFuture<OpCaller<OpData, OpReply<Void>>> binding(OpGroupBind group) {
+    public CompletableFuture<OpCall<OpData, OpReply<Void>>> bindFor(OpGroupBinding group) {
         return group
-                .bind("/sys/%s/thing/event/property/post_reply".formatted(thing.path().toURN()))
+                .binding("/sys/%s/thing/event/property/post_reply".formatted(thing.path().toURN()))
                 .map(mappingJsonFromByte(UTF_8))
                 .map(mappingJsonToOpReply(Void.class))
-                .call(new OpBind.Option().setTimeoutMs(option.getPropertyTimeoutMs()), identity());
+                .call(new OpBinding.Option().setTimeoutMs(option.getPropertyTimeoutMs()), identity());
     }
 
 }

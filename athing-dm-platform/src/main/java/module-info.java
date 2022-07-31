@@ -6,7 +6,7 @@ module athing.dm.platform {
     exports io.github.athingx.athing.dm.platform.message;
     exports io.github.athingx.athing.dm.platform.builder;
 
-    opens io.github.athingx.athing.dm.platform.message.decoder to com.google.gson, athing.common;
+    opens io.github.athingx.athing.dm.platform.message.decoder;
 
     requires transitive athing.dm.common;
     requires transitive athing.platform.api;
