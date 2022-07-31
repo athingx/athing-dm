@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
-import io.github.athingx.athing.common.GsonFactory;
+import io.github.athingx.athing.common.gson.GsonFactory;
 import io.github.athingx.athing.dm.api.ThingDmData;
 import io.github.athingx.athing.dm.common.meta.ThDmEventMeta;
 import io.github.athingx.athing.dm.common.meta.ThDmPropertyMeta;

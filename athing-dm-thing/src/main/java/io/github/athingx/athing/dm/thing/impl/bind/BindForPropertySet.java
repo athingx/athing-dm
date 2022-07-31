@@ -2,7 +2,7 @@ package io.github.athingx.athing.dm.thing.impl.bind;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.github.athingx.athing.common.GsonFactory;
+import io.github.athingx.athing.common.gson.GsonFactory;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.common.FeatureKeys;
 import io.github.athingx.athing.dm.common.meta.ThDmPropertyMeta;

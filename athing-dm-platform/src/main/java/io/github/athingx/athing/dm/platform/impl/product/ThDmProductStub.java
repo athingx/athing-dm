@@ -7,7 +7,7 @@ import com.aliyuncs.v5.iot.model.v20180120.InvokeThingServiceResponse;
 import com.aliyuncs.v5.iot.model.v20180120.SetDevicePropertyRequest;
 import com.aliyuncs.v5.iot.model.v20180120.SetDevicePropertyResponse;
 import com.google.gson.Gson;
-import io.github.athingx.athing.common.GsonFactory;
+import io.github.athingx.athing.common.gson.GsonFactory;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.common.meta.ThDmPropertyMeta;
 import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;

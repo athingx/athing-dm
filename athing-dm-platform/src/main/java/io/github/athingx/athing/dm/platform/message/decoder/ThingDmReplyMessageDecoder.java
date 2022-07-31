@@ -1,7 +1,7 @@
 package io.github.athingx.athing.dm.platform.message.decoder;
 
 import com.google.gson.JsonObject;
-import io.github.athingx.athing.common.GsonFactory;
+import io.github.athingx.athing.common.gson.GsonFactory;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
 import io.github.athingx.athing.dm.platform.impl.product.ThDmProductMeta;
