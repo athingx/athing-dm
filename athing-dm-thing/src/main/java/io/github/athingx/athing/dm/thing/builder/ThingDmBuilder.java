@@ -14,15 +14,30 @@ import java.util.concurrent.CompletableFuture;
 
 import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.tryCatchComplete;
 
+/**
+ * 设备模型构造器
+ */
 public class ThingDmBuilder {
 
     private ThingDmOption option = new ThingDmOption();
 
+    /**
+     * 设备模型参数
+     *
+     * @param option 参数
+     * @return this
+     */
     public ThingDmBuilder option(ThingDmOption option) {
         this.option = option;
         return this;
     }
 
+    /**
+     * 构造设备模型
+     *
+     * @param thing 设备
+     * @return 设备模型构造
+     */
     public CompletableFuture<ThingDm> build(Thing thing) {
         final OpGroupBinding group = thing.op().binding();
         final ThingDmCompContainer container = new ThingDmCompContainer(thing.path());
@@ -30,7 +45,6 @@ public class ThingDmBuilder {
         // 批量绑定
         group.bindFor(new BindForPropertySet(thing, container));
         group.bindFor(new BindForServiceAsync(thing, container));
-        group.bindFor(new BindForPropertySet(thing, container));
         group.bindFor(new BindingForForServiceSync(thing, container));
 
         // 绑定事件上报呼叫
@@ -46,9 +60,8 @@ public class ThingDmBuilder {
         // 提交绑定
         return group
                 .commit()
-                .thenCompose(binder -> tryCatchComplete(() -> new ThingDmImpl(
-                        thing,
-                        container,
+                .thenCompose(bind -> tryCatchComplete(() -> new ThingDmImpl(
+                        thing, bind, container,
                         eCallerFuture.get(),
                         pCallerFuture.get()
                 )));

@@ -79,6 +79,7 @@ public class PuppetSupport implements LoadingProperties {
 
     @AfterClass
     public static void _after_class() throws Exception {
+        thingDm.destroy();
         thing.destroy();
         platform.close();
     }

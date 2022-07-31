@@ -65,4 +65,11 @@ public interface ThingDm {
      */
     DumpTo dump();
 
+    /**
+     * 销毁设备模型
+     *
+     * @throws Exception 销毁失败
+     */
+    void destroy() throws Exception;
+
 }
