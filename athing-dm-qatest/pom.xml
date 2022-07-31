@@ -11,6 +11,11 @@
     <artifactId>athing-dm-qatest</artifactId>
     <name>${project.artifactId}</name>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

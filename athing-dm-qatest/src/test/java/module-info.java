@@ -7,4 +7,6 @@ open module athing.dm.qatest {
     requires athing.dm.platform;
 
     requires junit;
+    requires java.xml.bind;
+
 }
