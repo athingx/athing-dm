@@ -9,12 +9,12 @@ import java.util.concurrent.CompletableFuture;
 import static io.github.athingx.athing.thing.api.function.ThingFn.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class BindingForForPropertyCaller implements OpGroupBindFor<OpCall<OpData, OpReply<Void>>> {
+public class BindForForPropertyCaller implements OpGroupBindFor<OpCall<OpData, OpReply<Void>>> {
 
     private final Thing thing;
     private final ThingDmOption option;
 
-    public BindingForForPropertyCaller(Thing thing, ThingDmOption option) {
+    public BindForForPropertyCaller(Thing thing, ThingDmOption option) {
         this.thing = thing;
         this.option = option;
     }

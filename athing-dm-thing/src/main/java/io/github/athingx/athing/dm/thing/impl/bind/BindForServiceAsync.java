@@ -11,7 +11,7 @@ import static io.github.athingx.athing.thing.api.function.ThingFn.mappingJsonFro
 import static io.github.athingx.athing.thing.api.function.ThingFn.matchingTopic;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class BindForServiceAsync extends BindingForForService {
+public class BindForServiceAsync extends BindForForService {
 
     private final Thing thing;
 

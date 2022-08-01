@@ -45,16 +45,16 @@ public class ThingDmBuilder {
         // 批量绑定
         group.bindFor(new BindForPropertySet(thing, container));
         group.bindFor(new BindForServiceAsync(thing, container));
-        group.bindFor(new BindingForForServiceSync(thing, container));
+        group.bindFor(new BindForForServiceSync(thing, container));
 
         // 绑定事件上报呼叫
         final CompletableFuture<OpCall<OpData, OpReply<Void>>> eCallerFuture
-                = new BindingForForEventCaller(thing, option)
+                = new BindForForEventCaller(thing, option)
                 .bindFor(group);
 
         // 绑定属性上报呼叫
         final CompletableFuture<OpCall<OpData, OpReply<Void>>> pCallerFuture
-                = new BindingForForPropertyCaller(thing, option)
+                = new BindForForPropertyCaller(thing, option)
                 .bindFor(group);
 
         // 提交绑定
