@@ -67,9 +67,7 @@ public interface ThingDm {
 
     /**
      * 销毁设备模型
-     *
-     * @throws Exception 销毁失败
      */
-    void destroy() throws Exception;
+    CompletableFuture<Void> destroy();
 
 }

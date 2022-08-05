@@ -169,8 +169,8 @@ public class ThingDmImpl implements ThingDm {
     }
 
     @Override
-    public void destroy() throws Exception {
-        bind.unbind().get();
+    public CompletableFuture<Void> destroy() {
+        return bind.unbind();
     }
 
 }
