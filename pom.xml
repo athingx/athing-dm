@@ -8,7 +8,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <name>athing-dm</name>
-    <url>http://maven.apache.org</url>
+    <url>https://github.com/athingx/athing-dm</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
