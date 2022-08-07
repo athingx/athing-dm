@@ -78,10 +78,9 @@ public class PuppetSupport implements LoadingProperties {
 
 
     @AfterClass
-    public static void _after_class() throws Exception {
-        thingDm.destroy().get();
+    public static void _after_class() {
         thing.destroy();
-        platform.close();
+        platform.destroy();
     }
 
     public <T extends ThingReplyMessage> T waitingForReplyMessageByToken(String token) throws InterruptedException {

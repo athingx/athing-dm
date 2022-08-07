@@ -61,7 +61,7 @@ public class ThingDmBuilder {
         return group
                 .commit()
                 .thenCompose(bind -> tryCatchComplete(() -> new ThingDmImpl(
-                        thing, bind, container,
+                        thing, container,
                         eCallerFuture.get(),
                         pCallerFuture.get()
                 )));

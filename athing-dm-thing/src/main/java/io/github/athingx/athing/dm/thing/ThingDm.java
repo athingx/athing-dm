@@ -65,9 +65,4 @@ public interface ThingDm {
      */
     DumpTo dump();
 
-    /**
-     * 销毁设备模型
-     */
-    CompletableFuture<Void> destroy();
-
 }

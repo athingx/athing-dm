@@ -12,7 +12,6 @@ import io.github.athingx.athing.dm.thing.impl.define.DefineThDmCompImpl;
 import io.github.athingx.athing.dm.thing.impl.tsl.TslDumper;
 import io.github.athingx.athing.dm.thing.impl.util.MapOpData;
 import io.github.athingx.athing.thing.api.Thing;
-import io.github.athingx.athing.thing.api.op.OpBind;
 import io.github.athingx.athing.thing.api.op.OpCall;
 import io.github.athingx.athing.thing.api.op.OpData;
 import io.github.athingx.athing.thing.api.op.OpReply;
@@ -33,18 +32,15 @@ public class ThingDmImpl implements ThingDm {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
-    private final OpBind bind;
     private final OpCall<OpData, OpReply<Void>> eCaller;
     private final OpCall<OpData, OpReply<Void>> pCaller;
     private final ThingDmCompContainer container;
 
     public ThingDmImpl(final Thing thing,
-                       final OpBind bind,
                        final ThingDmCompContainer container,
                        final OpCall<OpData, OpReply<Void>> eCaller,
                        final OpCall<OpData, OpReply<Void>> pCaller) {
         this.thing = thing;
-        this.bind = bind;
         this.container = container;
         this.eCaller = eCaller;
         this.pCaller = pCaller;
@@ -166,11 +162,6 @@ public class ThingDmImpl implements ThingDm {
             }
 
         };
-    }
-
-    @Override
-    public CompletableFuture<Void> destroy() {
-        return bind.unbind();
     }
 
 }
