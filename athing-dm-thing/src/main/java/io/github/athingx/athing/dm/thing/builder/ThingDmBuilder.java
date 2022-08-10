@@ -43,18 +43,18 @@ public class ThingDmBuilder {
         final ThingDmCompContainer container = new ThingDmCompContainer(thing.path());
 
         // 批量绑定
-        group.bindFor(new BindForPropertySet(thing, container));
-        group.bindFor(new BindForServiceAsync(thing, container));
-        group.bindFor(new BindForForServiceSync(thing, container));
+        group.bindFor(new PropertySetOpBinder(thing, container));
+        group.bindFor(new ServiceAsyncOpBinder(thing, container));
+        group.bindFor(new ServiceSyncOpBinder(thing, container));
 
         // 绑定事件上报呼叫
-        final CompletableFuture<OpCall<OpData, OpReply<Void>>> eCallerFuture
-                = new BindForForEventCaller(thing, option)
+        final CompletableFuture<OpCall<OpData, OpReply<Void>>> eCallFuture
+                = new EventCallOpBinder(thing, option)
                 .bindFor(group);
 
         // 绑定属性上报呼叫
-        final CompletableFuture<OpCall<OpData, OpReply<Void>>> pCallerFuture
-                = new BindForForPropertyCaller(thing, option)
+        final CompletableFuture<OpCall<OpData, OpReply<Void>>> pCallFuture
+                = new PropertyCallOpBinder(thing, option)
                 .bindFor(group);
 
         // 提交绑定
@@ -62,8 +62,8 @@ public class ThingDmBuilder {
                 .commit()
                 .thenCompose(bind -> tryCatchComplete(() -> new ThingDmImpl(
                         thing, container,
-                        eCallerFuture.get(),
-                        pCallerFuture.get()
+                        eCallFuture.get(),
+                        pCallFuture.get()
                 )));
     }
 

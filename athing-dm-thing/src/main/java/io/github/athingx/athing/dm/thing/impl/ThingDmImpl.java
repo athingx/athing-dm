@@ -32,25 +32,25 @@ public class ThingDmImpl implements ThingDm {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
-    private final OpCall<OpData, OpReply<Void>> eCaller;
-    private final OpCall<OpData, OpReply<Void>> pCaller;
+    private final OpCall<OpData, OpReply<Void>> eCall;
+    private final OpCall<OpData, OpReply<Void>> pCall;
     private final ThingDmCompContainer container;
 
     public ThingDmImpl(final Thing thing,
                        final ThingDmCompContainer container,
-                       final OpCall<OpData, OpReply<Void>> eCaller,
-                       final OpCall<OpData, OpReply<Void>> pCaller) {
+                       final OpCall<OpData, OpReply<Void>> eCall,
+                       final OpCall<OpData, OpReply<Void>> pCall) {
         this.thing = thing;
         this.container = container;
-        this.eCaller = eCaller;
-        this.pCaller = pCaller;
+        this.eCall = eCall;
+        this.pCall = pCall;
     }
 
     @Override
     public CompletableFuture<OpReply<Void>> event(ThingDmEvent<?> event) {
         final String identity = event.getIdentifier().getIdentity();
         final String token = thing.op().genToken();
-        return eCaller.calling("/sys/%s/thing/event/%s/post".formatted(thing.path().toURN(), identity),
+        return eCall.calling("/sys/%s/thing/event/%s/post".formatted(thing.path().toURN(), identity),
                         new MapOpData(token, new MapData()
                                 .putProperty("id", token)
                                 .putProperty("version", "1.0")
@@ -110,7 +110,7 @@ public class ThingDmImpl implements ThingDm {
 
         }
 
-        return pCaller.calling("/sys/%s/thing/event/property/post".formatted(thing.path().toURN()),
+        return pCall.calling("/sys/%s/thing/event/property/post".formatted(thing.path().toURN()),
                         new MapOpData(token, new MapData()
                                 .putProperty("id", token)
                                 .putProperty("version", "1.0")

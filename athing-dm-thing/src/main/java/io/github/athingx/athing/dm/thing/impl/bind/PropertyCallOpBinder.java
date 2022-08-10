@@ -9,12 +9,12 @@ import java.util.concurrent.CompletableFuture;
 import static io.github.athingx.athing.thing.api.function.ThingFn.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class BindForForEventCaller implements OpGroupBindFor<OpCall<OpData, OpReply<Void>>> {
+public class PropertyCallOpBinder implements OpGroupBinder<OpCall<OpData, OpReply<Void>>> {
 
     private final Thing thing;
     private final ThingDmOption option;
 
-    public BindForForEventCaller(Thing thing, ThingDmOption option) {
+    public PropertyCallOpBinder(Thing thing, ThingDmOption option) {
         this.thing = thing;
         this.option = option;
     }
@@ -22,14 +22,10 @@ public class BindForForEventCaller implements OpGroupBindFor<OpCall<OpData, OpRe
     @Override
     public CompletableFuture<OpCall<OpData, OpReply<Void>>> bindFor(OpGroupBinding group) {
         return group
-                .binding("/sys/%s/thing/event/+/post_reply".formatted(thing.path().toURN()))
-                /*
-                 * 这里需要过滤掉属性的应答，因为消息和属性的投递应答都用了同一个topic订阅表达式。
-                 */
-                .matches(matchingTopic(topic -> !topic.endsWith("/thing/event/property/post_reply")))
-                .map(mappingJsonFromByte(UTF_8))
+                .binding("/sys/%s/thing/event/property/post_reply".formatted(thing.path().toURN()))
+                .map(mappingByteToJson(UTF_8))
                 .map(mappingJsonToOpReply(Void.class))
-                .call(new OpBinding.Option().setTimeoutMs(option.getEventTimeoutMs()), identity());
+                .call(new OpBinding.Option().setTimeoutMs(option.getPropertyTimeoutMs()), identity());
     }
 
 }

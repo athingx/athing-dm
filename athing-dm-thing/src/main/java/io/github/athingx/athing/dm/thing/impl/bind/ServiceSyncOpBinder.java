@@ -7,14 +7,14 @@ import io.github.athingx.athing.thing.api.op.OpGroupBinding;
 
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.athingx.athing.thing.api.function.ThingFn.mappingJsonFromByte;
+import static io.github.athingx.athing.thing.api.function.ThingFn.mappingByteToJson;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class BindForForServiceSync extends BindForForService {
+public class ServiceSyncOpBinder extends ServiceOpBinder {
 
     private final Thing thing;
 
-    public BindForForServiceSync(Thing thing, ThingDmCompContainer container) {
+    public ServiceSyncOpBinder(Thing thing, ThingDmCompContainer container) {
         super(thing, container);
         this.thing = thing;
     }
@@ -23,7 +23,7 @@ public class BindForForServiceSync extends BindForForService {
     public CompletableFuture<OpBind> bindFor(OpGroupBinding group) {
         return group
                 .binding("/ext/rrpc/+/sys/%s/thing/service/+".formatted(thing.path().toURN()))
-                .map(mappingJsonFromByte(UTF_8))
+                .map(mappingByteToJson(UTF_8))
                 .bind((topic, message) -> service(true, topic, message));
     }
 

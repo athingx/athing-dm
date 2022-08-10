@@ -10,7 +10,7 @@ import io.github.athingx.athing.dm.common.util.FeatureCodec;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpBind;
-import io.github.athingx.athing.thing.api.op.OpGroupBindFor;
+import io.github.athingx.athing.thing.api.op.OpGroupBinder;
 import io.github.athingx.athing.thing.api.op.OpGroupBinding;
 import io.github.athingx.athing.thing.api.op.OpReply;
 import org.slf4j.Logger;
@@ -22,16 +22,16 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.whenCompleted;
-import static io.github.athingx.athing.thing.api.function.ThingFn.mappingJsonFromByte;
+import static io.github.athingx.athing.thing.api.function.ThingFn.mappingByteToJson;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class BindForPropertySet implements OpGroupBindFor<OpBind> {
+public class PropertySetOpBinder implements OpGroupBinder<OpBind> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
     private final ThingDmCompContainer container;
 
-    public BindForPropertySet(Thing thing, ThingDmCompContainer container) {
+    public PropertySetOpBinder(Thing thing, ThingDmCompContainer container) {
         this.thing = thing;
         this.container = container;
     }
@@ -40,7 +40,7 @@ public class BindForPropertySet implements OpGroupBindFor<OpBind> {
     public CompletableFuture<OpBind> bindFor(OpGroupBinding group) {
         return group
                 .binding("/sys/%s/thing/service/property/set".formatted(thing.path().toURN()))
-                .map(mappingJsonFromByte(UTF_8))
+                .map(mappingByteToJson(UTF_8))
                 .bind((topic, json) -> {
 
                     final JsonObject requestJsonObject = JsonParser.parseString(json).getAsJsonObject();
