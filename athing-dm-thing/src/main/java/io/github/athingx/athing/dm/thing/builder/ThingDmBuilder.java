@@ -3,7 +3,7 @@ package io.github.athingx.athing.dm.thing.builder;
 import io.github.athingx.athing.dm.thing.ThingDm;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.dm.thing.impl.ThingDmImpl;
-import io.github.athingx.athing.dm.thing.impl.bind.*;
+import io.github.athingx.athing.dm.thing.impl.binder.*;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpCall;
 import io.github.athingx.athing.thing.api.op.OpData;

@@ -1,4 +1,4 @@
-package io.github.athingx.athing.dm.thing.impl.bind;
+package io.github.athingx.athing.dm.thing.impl.binder;
 
 import io.github.athingx.athing.dm.thing.builder.ThingDmOption;
 import io.github.athingx.athing.thing.api.Thing;

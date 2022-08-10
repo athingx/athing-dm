@@ -1,4 +1,4 @@
-package io.github.athingx.athing.dm.thing.impl.bind;
+package io.github.athingx.athing.dm.thing.impl.binder;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
