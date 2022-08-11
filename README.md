@@ -35,13 +35,27 @@ Just a Thing
 ```
 
 ```java
+// 定义设备模型接口
+@ThDmComp(id = ID)
+public interface LightComp extends ThingDmComp {
+
+    String ID = "light";
+
+    @ThDmProperty
+    int getBright();
+    
+    @ThDmService
+    void changeBright(@ThDmParam("bright") int bright);
+    
+}
+
 // 构建设备模型
 final var thingDm = new ThingDmBuilder()
         .build(thing)
         .get();
 
 // 注册服务
-        thingDm.load(new LightCompImpl());  
+thingDm.load(new LightCompImpl());  
 ```
 
 ### 构建服务端
@@ -60,6 +74,6 @@ final var thingDm = new ThingDmBuilder()
 final var thingDmTemplate = platform.genThingTemplate(ThingDmTemplate.class, PRODUCT_ID, THING_ID);
 
 // 获取组件&并调用服务
-final var lightComp = thingDmtemplate.getThingDmComp("light", LightComp.class);
+final var lightComp = thingDmTemplate.getThingDmComp("light", LightComp.class);
 lightComp.changeBright(100);
 ```
