@@ -9,6 +9,16 @@
     <packaging>pom</packaging>
     <name>athing-dm</name>
     <url>https://github.com/athingx/athing-dm</url>
+    <developers>
+        <developer>
+            <id>oldmanpushcart</id>
+            <organization>athingx</organization>
+            <organizationUrl>https://github.com/athingx</organizationUrl>
+            <name>oldmanpushcart</name>
+            <email>oldmanpushcart@gmail.com</email>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -113,5 +123,19 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/athingx/athing-dm</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/athingx/athing</url>
+        </repository>
+    </repositories>
 
 </project>
