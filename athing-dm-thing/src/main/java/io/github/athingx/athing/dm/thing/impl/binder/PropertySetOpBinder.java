@@ -10,8 +10,8 @@ import io.github.athingx.athing.dm.common.util.FeatureCodec;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpBind;
-import io.github.athingx.athing.thing.api.op.OpGroupBinder;
-import io.github.athingx.athing.thing.api.op.OpGroupBinding;
+import io.github.athingx.athing.thing.api.op.OpBindable;
+import io.github.athingx.athing.thing.api.op.OpBinder;
 import io.github.athingx.athing.thing.api.op.OpReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.wh
 import static io.github.athingx.athing.thing.api.function.ThingFn.mappingByteToJson;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class PropertySetOpBinder implements OpGroupBinder<OpBind> {
+public class PropertySetOpBinder implements OpBinder<OpBind> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
@@ -37,8 +37,8 @@ public class PropertySetOpBinder implements OpGroupBinder<OpBind> {
     }
 
     @Override
-    public CompletableFuture<OpBind> bindFor(OpGroupBinding group) {
-        return group
+    public CompletableFuture<OpBind> bind(OpBindable bindable) {
+        return bindable
                 .binding("/sys/%s/thing/service/property/set".formatted(thing.path().toURN()))
                 .map(mappingByteToJson(UTF_8))
                 .bind((topic, json) -> {
@@ -50,7 +50,7 @@ public class PropertySetOpBinder implements OpGroupBinder<OpBind> {
                         put(FeatureKeys.KEY_SET_PROPERTIES_SUCCESS_IDS, String.join(",", successIds));
                     }});
 
-                    thing.op().data(topic + "_reply", OpReply.success(token, message))
+                    thing.op().post(topic + "_reply", OpReply.success(token, message))
                             .whenComplete(whenCompleted(
                                     v -> logger.debug("{}/dm/property/set success; token={};identities={};", thing.path(), token, successIds),
                                     ex -> logger.warn("{}/dm/property/set failure; token={};identities={};", thing.path(), token, successIds, ex)

@@ -3,7 +3,7 @@ package io.github.athingx.athing.dm.thing.impl.binder;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpBind;
-import io.github.athingx.athing.thing.api.op.OpGroupBinding;
+import io.github.athingx.athing.thing.api.op.OpBindable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -20,8 +20,8 @@ public class ServiceSyncOpBinder extends ServiceOpBinder {
     }
 
     @Override
-    public CompletableFuture<OpBind> bindFor(OpGroupBinding group) {
-        return group
+    public CompletableFuture<OpBind> bind(OpBindable bindable) {
+        return bindable
                 .binding("/ext/rrpc/+/sys/%s/thing/service/+".formatted(thing.path().toURN()))
                 .map(mappingByteToJson(UTF_8))
                 .bind((topic, message) -> service(true, topic, message));

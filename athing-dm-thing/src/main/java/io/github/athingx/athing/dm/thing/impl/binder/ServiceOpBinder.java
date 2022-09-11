@@ -9,7 +9,7 @@ import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpBind;
-import io.github.athingx.athing.thing.api.op.OpGroupBinder;
+import io.github.athingx.athing.thing.api.op.OpBinder;
 import io.github.athingx.athing.thing.api.op.OpReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.wh
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.failedFuture;
 
-abstract public class ServiceOpBinder implements OpGroupBinder<OpBind>, ThingDmCodes {
+abstract public class ServiceOpBinder implements OpBinder<OpBind>, ThingDmCodes {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
@@ -62,7 +62,7 @@ abstract public class ServiceOpBinder implements OpGroupBinder<OpBind>, ThingDmC
         // 不合法的标识值
         if (!Identifier.test(identity)) {
             logger.warn("{}/dm/service/invoke failure; illegal identity! token={};identity={};", thing.path(), token, identity);
-            thing.op().data(rTopic, OpReply.reply(token, REQUEST_ERROR, "identity: %s is illegal".formatted(identity)));
+            thing.op().post(rTopic, OpReply.reply(token, REQUEST_ERROR, "identity: %s is illegal".formatted(identity)));
             return;
         }
 
@@ -72,7 +72,7 @@ abstract public class ServiceOpBinder implements OpGroupBinder<OpBind>, ThingDmC
         final ThingDmCompContainer.Stub stub = container.get(identifier.getComponentId());
         if (null == stub) {
             logger.warn("{}/dm/service/invoke failure; comp not provided! token={};identity={};", thing.path(), token, identity);
-            thing.op().data(rTopic, OpReply.reply(token, REQUEST_ERROR, "comp: %s not provided".formatted(identifier.getComponentId())));
+            thing.op().post(rTopic, OpReply.reply(token, REQUEST_ERROR, "comp: %s not provided".formatted(identifier.getComponentId())));
             return;
         }
 
@@ -80,15 +80,15 @@ abstract public class ServiceOpBinder implements OpGroupBinder<OpBind>, ThingDmC
         final ThDmServiceMeta meta = stub.meta().getThDmServiceMeta(identifier);
         if (null == meta) {
             logger.warn("{}/dm/service/invoke failure; service is not provided! token={};identity={};", thing.path(), token, identity);
-            thing.op().data(rTopic, OpReply.reply(token, SERVICE_NOT_PROVIDED, "service: %s not provided".formatted(identity)));
+            thing.op().post(rTopic, OpReply.reply(token, SERVICE_NOT_PROVIDED, "service: %s not provided".formatted(identity)));
             return;
         }
 
         // 方法调用
         invoke(stub, meta, json.get("params").getAsJsonObject())
                 .whenComplete(whenCompleted(
-                        v -> thing.op().data(rTopic, OpReply.success(token, v)),
-                        e -> thing.op().data(rTopic, OpReply.reply(token, PROCESS_ERROR, e.getLocalizedMessage()))
+                        v -> thing.op().post(rTopic, OpReply.success(token, v)),
+                        e -> thing.op().post(rTopic, OpReply.reply(token, PROCESS_ERROR, e.getLocalizedMessage()))
                 ))
                 .whenComplete(whenCompleted(
                         v -> logger.debug("{}/dm/service/invoke success; token={};identity={};", thing.path(), token, identity),
