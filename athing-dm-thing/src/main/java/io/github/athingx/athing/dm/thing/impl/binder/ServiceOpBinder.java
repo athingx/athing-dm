@@ -6,6 +6,7 @@ import io.github.athingx.athing.common.gson.GsonFactory;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.common.ThingDmCodes;
 import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
+import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpBind;
@@ -84,21 +85,31 @@ abstract public class ServiceOpBinder implements OpBinder<OpBind>, ThingDmCodes 
             return;
         }
 
-        // 方法调用
-        invoke(stub, meta, json.get("params").getAsJsonObject())
-                .whenComplete(whenCompleted(
-                        v -> thing.op().post(rTopic, OpReply.success(token, v)),
-                        e -> thing.op().post(rTopic, OpReply.reply(token, PROCESS_ERROR, e.getLocalizedMessage()))
-                ))
-                .whenComplete(whenCompleted(
-                        v -> logger.debug("{}/dm/service/invoke success; token={};identity={};", thing.path(), token, identity),
-                        ex -> logger.warn("{}/dm/service/invoke failure; invoke error! token={};identity={};", this, token, identity, ex)
-                ));
+        DmRuntime.enter();
+        try {
+
+            DmRuntime.getRuntime().setToken(token);
+
+            // 方法调用
+            invoke(stub, meta, json.get("params").getAsJsonObject())
+                    .whenComplete(whenCompleted(
+                            v -> thing.op().post(rTopic, OpReply.success(token, v)),
+                            e -> thing.op().post(rTopic, OpReply.reply(token, PROCESS_ERROR, e.getLocalizedMessage()))
+                    ))
+                    .whenComplete(whenCompleted(
+                            v -> logger.debug("{}/dm/service/invoke success; token={};identity={};", thing.path(), token, identity),
+                            ex -> logger.warn("{}/dm/service/invoke failure; invoke error! token={};identity={};", this, token, identity, ex)
+                    ));
+        } finally {
+            DmRuntime.exit();
+        }
+
 
     }
 
     // 方法调用，同步/异步，转换为异步
     private CompletableFuture<Object> invoke(ThingDmCompContainer.Stub stub, ThDmServiceMeta meta, JsonObject argumentJson) {
+
 
         try {
 

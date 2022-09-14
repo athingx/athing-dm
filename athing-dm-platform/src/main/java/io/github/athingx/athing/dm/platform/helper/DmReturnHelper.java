@@ -1,12 +1,14 @@
 package io.github.athingx.athing.dm.platform.helper;
 
 
-import static io.github.athingx.athing.dm.platform.helper.OpRuntime.getRuntime;
+import io.github.athingx.athing.dm.common.runtime.DmRuntime;
+
+import static io.github.athingx.athing.dm.common.runtime.DmRuntime.getRuntime;
 
 /**
  * 设备平台返回工具类
  */
-public class OpReturnHelper {
+public class DmReturnHelper {
 
     /**
      * 获取平台返回
@@ -15,13 +17,13 @@ public class OpReturnHelper {
      * @param <V>       返回值类型
      * @return TpOpFuture
      */
-    public static <V> OpReturn<V> getOpReturn(GetReturn<V> getReturn) throws Exception {
-        OpRuntime.enter();
+    public static <V> DmReturn<V> getOpReturn(GetReturn<V> getReturn) throws Exception {
+        DmRuntime.enter();
         try {
             final V data = getReturn.getReturn();
-            return new OpReturn<>(getRuntime().getToken(), data);
+            return new DmReturn<>(getRuntime().getToken(), data);
         } finally {
-            OpRuntime.exit();
+            DmRuntime.exit();
         }
     }
 
@@ -31,13 +33,13 @@ public class OpReturnHelper {
      * @param getEmptyReturn 获取空返回，只单纯执行不关注返回值
      * @return TpOpFuture
      */
-    public static OpReturn<Void> getOpEmptyReturn(GetEmptyReturn getEmptyReturn) throws Exception {
-        OpRuntime.enter();
+    public static DmReturn<Void> getOpEmptyReturn(GetEmptyReturn getEmptyReturn) throws Exception {
+        DmRuntime.enter();
         try {
             getEmptyReturn.getEmptyReturn();
-            return new OpReturn<>(getRuntime().getToken(), null);
+            return new DmReturn<>(getRuntime().getToken(), null);
         } finally {
-            OpRuntime.exit();
+            DmRuntime.exit();
         }
     }
 

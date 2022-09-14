@@ -6,6 +6,7 @@ import io.github.athingx.athing.common.gson.GsonFactory;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.common.FeatureKeys;
 import io.github.athingx.athing.dm.common.meta.ThDmPropertyMeta;
+import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.dm.common.util.FeatureCodec;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
@@ -98,7 +99,9 @@ public class PropertySetOpBinder implements OpBinder<OpBind> {
             }
 
             // 属性赋值
+            DmRuntime.enter();
             try {
+                DmRuntime.getRuntime().setToken(token);
                 meta.setPropertyValue(
                         stub.comp(),
                         GsonFactory.getGson().fromJson(entry.getValue(), meta.getPropertyType())
@@ -107,6 +110,8 @@ public class PropertySetOpBinder implements OpBinder<OpBind> {
                 logger.debug("{}/dm/property/set success; token={};identity={};", thing.path(), token, identity);
             } catch (Throwable cause) {
                 logger.warn("{}/dm/property/set ignored; set occur error! token={};identity={};", thing.path(), token, identity, cause);
+            } finally {
+                DmRuntime.exit();
             }
 
         });

@@ -1,11 +1,11 @@
-package io.github.athingx.athing.dm.platform.helper;
+package io.github.athingx.athing.dm.common.runtime;
 
 /**
  * 设备平台运行时
  */
-public class OpRuntime {
+public class DmRuntime {
 
-    private static final ThreadLocal<OpRuntime> tpRuntimeRef = new ThreadLocal<>();
+    private static final ThreadLocal<DmRuntime> dmRuntimeRef = new ThreadLocal<>();
     private String token;
 
     /**
@@ -14,14 +14,14 @@ public class OpRuntime {
      * @return TRUE | FALSE
      */
     public static boolean isInRuntime() {
-        return null != tpRuntimeRef.get();
+        return null != dmRuntimeRef.get();
     }
 
     /**
      * 进入运行时
      */
-    static void enter() {
-        tpRuntimeRef.set(new OpRuntime());
+    public static void enter() {
+        dmRuntimeRef.set(new DmRuntime());
     }
 
     /**
@@ -29,19 +29,19 @@ public class OpRuntime {
      *
      * @return 运行时
      */
-    public static OpRuntime getRuntime() {
-        final OpRuntime opRuntime = tpRuntimeRef.get();
-        if (null == opRuntime) {
+    public static DmRuntime getRuntime() {
+        final DmRuntime dmRuntime = dmRuntimeRef.get();
+        if (null == dmRuntime) {
             throw new IllegalStateException("not in runtime");
         }
-        return opRuntime;
+        return dmRuntime;
     }
 
     /**
      * 退出当前运行时
      */
-    static void exit() {
-        tpRuntimeRef.remove();
+    public static void exit() {
+        dmRuntimeRef.remove();
     }
 
     /**
