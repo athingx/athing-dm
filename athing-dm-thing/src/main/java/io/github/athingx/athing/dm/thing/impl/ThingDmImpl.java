@@ -131,10 +131,11 @@ public class ThingDmImpl implements ThingDm {
     }
 
     @Override
-    public void load(ThingDmComp... comps) {
+    public ThingDm load(ThingDmComp... comps) {
         if (Objects.nonNull(comps)) {
             Stream.of(comps).forEach(container::load);
         }
+        return this;
     }
 
     @SuppressWarnings("unchecked")

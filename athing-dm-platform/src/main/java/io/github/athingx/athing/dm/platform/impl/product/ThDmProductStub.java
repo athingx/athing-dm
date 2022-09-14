@@ -64,8 +64,10 @@ public class ThDmProductStub {
     private String generateServiceArguments(ThDmServiceMeta sMeta, Object[] arguments) {
         final List<String> names = new ArrayList<>(sMeta.getParameterMap().keySet());
         final Map<String, Object> argumentMap = new HashMap<>();
-        for (int index = 0; index < arguments.length; index++) {
-            argumentMap.put(names.get(index), arguments[index]);
+        if(Objects.nonNull(arguments)) {
+            for (int index = 0; index < arguments.length; index++) {
+                argumentMap.put(names.get(index), arguments[index]);
+            }
         }
         return gson.toJson(argumentMap);
     }
@@ -109,8 +111,8 @@ public class ThDmProductStub {
                         "/%s/%s invoke service: %s response failure, token=%s;code=%s;message=%s;".formatted(
                                 meta.getProductId(),
                                 thingId,
-                                response.getRequestId(),
                                 identity,
+                                response.getRequestId(),
                                 response.getCode(),
                                 response.getErrorMessage()
                         ));

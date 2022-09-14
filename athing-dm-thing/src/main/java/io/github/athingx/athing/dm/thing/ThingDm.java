@@ -45,8 +45,9 @@ public interface ThingDm {
      * 加载设备组件
      *
      * @param comps 设备组件集合
+     * @return this
      */
-    void load(ThingDmComp... comps);
+    ThingDm load(ThingDmComp... comps);
 
     /**
      * 获取设备组件
