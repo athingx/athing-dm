@@ -40,7 +40,7 @@ public class PuppetSupport implements LoadingProperties {
     @BeforeClass
     public static void _before_class() throws Exception {
         thing = new ThingBuilder(new ThingPath(PRODUCT_ID, THING_ID))
-                .client(new AliyunMqttClientFactory()
+                .clientFactory(new AliyunMqttClientFactory()
                         .remote(THING_REMOTE)
                         .secret(THING_SECRET))
                 .build();
