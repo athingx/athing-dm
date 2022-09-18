@@ -98,7 +98,7 @@ abstract public class ServiceOpBinder implements OpBinder<OpBind>, ThingDmCodes 
                     ))
                     .whenComplete(whenCompleted(
                             v -> logger.debug("{}/dm/service/invoke success; token={};identity={};", thing.path(), token, identity),
-                            ex -> logger.warn("{}/dm/service/invoke failure; invoke error! token={};identity={};", this, token, identity, ex)
+                            ex -> logger.warn("{}/dm/service/invoke failure; invoke error! token={};identity={};", thing.path(), token, identity, ex)
                     ));
         } finally {
             DmRuntime.exit();
