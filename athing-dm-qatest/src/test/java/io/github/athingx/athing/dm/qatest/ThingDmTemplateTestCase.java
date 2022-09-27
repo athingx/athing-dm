@@ -140,4 +140,26 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
 
     }
 
+    @Test
+    public void test$template$service$invoke$exception_in_method() throws Exception {
+        final var echoComp = thingDmTemplate.getThingDmComp("echo", EchoComp.class);
+        final var dmReturn = DmReturnHelper.getOpReturn(()
+                -> echoComp.asyncEchoWithException(new EchoComp.Echo("hello")));
+        Assert.assertNull(dmReturn.data().get());
+        final ThingDmReplyServiceReturnMessage message = waitingForReplyMessageByToken(dmReturn.token());
+        Assert.assertEquals("throwInMethod", message.getDesc());
+        Assert.assertEquals(500, message.getCode());
+    }
+
+    @Test
+    public void test$template$service$invoke$exception_in_future() throws Exception {
+        final var echoComp = thingDmTemplate.getThingDmComp("echo", EchoComp.class);
+        final var dmReturn = DmReturnHelper.getOpReturn(()
+                -> echoComp.asyncEchoWithException(new EchoComp.Echo("throwsInFuture")));
+        Assert.assertNull(dmReturn.data().get());
+        final ThingDmReplyServiceReturnMessage message = waitingForReplyMessageByToken(dmReturn.token());
+        Assert.assertEquals("throwsInFuture", message.getDesc());
+        Assert.assertEquals(500, message.getCode());
+    }
+
 }

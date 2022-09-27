@@ -17,6 +17,9 @@ public interface EchoComp extends ThingDmComp {
     @ThDmService(isSync = false)
     CompletableFuture<Echo> asyncEcho(@ThDmParam("echo") Echo echo);
 
+    @ThDmService(isSync = false)
+    CompletableFuture<Echo> asyncEchoWithException(@ThDmParam("echo") Echo echo);
+
     record Echo(String words) implements ThingDmData {
 
     }

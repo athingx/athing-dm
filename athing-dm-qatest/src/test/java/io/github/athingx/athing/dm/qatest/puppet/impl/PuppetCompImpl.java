@@ -32,6 +32,14 @@ public class PuppetCompImpl implements EchoComp, LightComp {
     }
 
     @Override
+    public CompletableFuture<Echo> asyncEchoWithException(Echo echo) {
+        if(echo.words().equals("throwsInFuture")) {
+            return CompletableFuture.failedFuture(new RuntimeException("throwsInFuture"));
+        }
+        throw new RuntimeException("throwInMethod");
+    }
+
+    @Override
     public int getBright() {
         return bright;
     }

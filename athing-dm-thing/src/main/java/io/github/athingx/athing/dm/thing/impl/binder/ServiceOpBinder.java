@@ -8,6 +8,7 @@ import io.github.athingx.athing.dm.common.ThingDmCodes;
 import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
 import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
+import io.github.athingx.athing.dm.thing.impl.util.ExceptionUtils;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpBind;
 import io.github.athingx.athing.thing.api.op.OpBinder;
@@ -94,7 +95,7 @@ abstract public class ServiceOpBinder implements OpBinder<OpBind>, ThingDmCodes 
             invoke(stub, meta, json.get("params").getAsJsonObject())
                     .whenComplete(whenCompleted(
                             v -> thing.op().post(rTopic, OpReply.success(token, v)),
-                            e -> thing.op().post(rTopic, OpReply.reply(token, PROCESS_ERROR, e.getLocalizedMessage()))
+                            e -> thing.op().post(rTopic, OpReply.reply(token, PROCESS_ERROR, ExceptionUtils.getCause(e).getLocalizedMessage()))
                     ))
                     .whenComplete(whenCompleted(
                             v -> logger.debug("{}/dm/service/invoke success; token={};identity={};", thing.path(), token, identity),
