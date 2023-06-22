@@ -45,10 +45,10 @@ public class PuppetSupport implements LoadingProperties {
                         .secret(THING_SECRET))
                 .build();
         platform = new ThingPlatformBuilder()
-                .client(new AliyunIAcsClientFactory()
+                .clientFactory(new AliyunIAcsClientFactory()
                         .identity(PLATFORM_IDENTITY)
                         .secret(PLATFORM_SECRET))
-                .consumer(new AliyunThingMessageConsumerFactory()
+                .consumerFactory(new AliyunThingMessageConsumerFactory()
                         .queue(PLATFORM_JMS_GROUP)
                         .connection(new AliyunJmsConnectionFactory()
                                 .queue(PLATFORM_JMS_GROUP)
