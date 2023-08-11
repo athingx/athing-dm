@@ -1,7 +1,5 @@
 package io.github.athingx.athing.dm.platform.impl.product;
 
-import com.aliyuncs.v5.IAcsClient;
-import com.aliyuncs.v5.exceptions.ClientException;
 import com.aliyuncs.v5.iot.model.v20180120.InvokeThingServiceRequest;
 import com.aliyuncs.v5.iot.model.v20180120.InvokeThingServiceResponse;
 import com.aliyuncs.v5.iot.model.v20180120.SetDevicePropertyRequest;
@@ -11,11 +9,12 @@ import io.github.athingx.athing.common.gson.GsonFactory;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.common.meta.ThDmPropertyMeta;
 import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
+import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.dm.common.util.MapData;
 import io.github.athingx.athing.dm.platform.domain.SortOrder;
 import io.github.athingx.athing.dm.platform.domain.ThingDmPropertySnapshot;
-import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.platform.api.ThingPlatformException;
+import io.github.athingx.athing.platform.api.client.ThingPlatformClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,7 @@ public class ThDmProductStub {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Gson gson = GsonFactory.getGson();
 
-    private final IAcsClient client;
+    private final ThingPlatformClient client;
     private final ThDmProductMeta meta;
     private final String _string;
 
@@ -40,7 +39,7 @@ public class ThDmProductStub {
      * @param client ACS客户端
      * @param meta   产品元数据
      */
-    public ThDmProductStub(IAcsClient client, ThDmProductMeta meta) {
+    public ThDmProductStub(ThingPlatformClient client, ThDmProductMeta meta) {
         this.client = client;
         this.meta = meta;
         this._string = String.format("thing-platform:/%s", meta.getProductId());
@@ -103,7 +102,7 @@ public class ThDmProductStub {
         try {
 
             // 执行调用
-            final InvokeThingServiceResponse response = client.getAcsResponse(request);
+            final InvokeThingServiceResponse response = client.execute(request, InvokeThingServiceResponse.class);
 
             // 平台返回调用失败
             if (!response.getSuccess()) {
@@ -130,7 +129,7 @@ public class ThDmProductStub {
             // 返回类型需要做进一步封装处理
             return box(sMeta, result);
 
-        } catch (ClientException cause) {
+        } catch (ThingPlatformException cause) {
             throw new ThingPlatformException(
                     String.format("/%s/%s service: %s invoke error!", meta.getProductId(), thingId, identity),
                     cause
@@ -193,7 +192,7 @@ public class ThDmProductStub {
         try {
 
             // 执行设置
-            final SetDevicePropertyResponse response = client.getAcsResponse(request);
+            final SetDevicePropertyResponse response = client.execute(request, SetDevicePropertyResponse.class);
 
             // 平台返回调用失败
             if (!response.getSuccess()) {
@@ -215,7 +214,7 @@ public class ThDmProductStub {
                 DmRuntime.getRuntime().setToken(token);
             }
 
-        } catch (ClientException cause) {
+        } catch (ThingPlatformException cause) {
             throw new ThingPlatformException(
                     "/%s/%s set property error, identities=%s".formatted(
                             meta.getProductId(),

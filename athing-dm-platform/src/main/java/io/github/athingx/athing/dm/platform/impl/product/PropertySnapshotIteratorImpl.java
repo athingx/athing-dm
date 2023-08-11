@@ -1,7 +1,5 @@
 package io.github.athingx.athing.dm.platform.impl.product;
 
-import com.aliyuncs.v5.IAcsClient;
-import com.aliyuncs.v5.exceptions.ClientException;
 import com.aliyuncs.v5.iot.model.v20180120.QueryDevicePropertyDataRequest;
 import com.aliyuncs.v5.iot.model.v20180120.QueryDevicePropertyDataResponse;
 import com.google.gson.Gson;
@@ -11,6 +9,7 @@ import io.github.athingx.athing.dm.common.meta.ThDmPropertyMeta;
 import io.github.athingx.athing.dm.platform.domain.SortOrder;
 import io.github.athingx.athing.dm.platform.domain.ThingDmPropertySnapshot;
 import io.github.athingx.athing.platform.api.ThingPlatformException;
+import io.github.athingx.athing.platform.api.client.ThingPlatformClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,7 @@ class PropertySnapshotIteratorImpl implements Iterator<ThingDmPropertySnapshot> 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Gson gson = GsonFactory.getGson();
 
-    private final IAcsClient client;
+    private final ThingPlatformClient client;
     private final String productId;
     private final String thingId;
     private final long end;
@@ -35,7 +34,7 @@ class PropertySnapshotIteratorImpl implements Iterator<ThingDmPropertySnapshot> 
     private QueryDevicePropertyDataResponse rollingResponse;
     private Iterator<ThingDmPropertySnapshot> rollingIt;
 
-    PropertySnapshotIteratorImpl(final IAcsClient client,
+    PropertySnapshotIteratorImpl(final ThingPlatformClient client,
                                  final ThDmProductMeta thProductMeta,
                                  final String thingId,
                                  final Identifier identifier,
@@ -67,6 +66,7 @@ class PropertySnapshotIteratorImpl implements Iterator<ThingDmPropertySnapshot> 
     private void rolling(long begin) throws ThingPlatformException {
         final Identifier identifier = thPropertyMeta.getIdentifier();
         final QueryDevicePropertyDataRequest request = new QueryDevicePropertyDataRequest();
+
         request.setProductKey(productId);
         request.setDeviceName(thingId);
         request.setAsc(order.getValue());
@@ -76,7 +76,7 @@ class PropertySnapshotIteratorImpl implements Iterator<ThingDmPropertySnapshot> 
         request.setIdentifier(identifier.getIdentity());
 
         try {
-            final QueryDevicePropertyDataResponse response = client.getAcsResponse(request);
+            final QueryDevicePropertyDataResponse response = client.execute(request, QueryDevicePropertyDataResponse.class);
 
             // 平台返回调用失败
             if (!response.getSuccess()) {
@@ -107,7 +107,7 @@ class PropertySnapshotIteratorImpl implements Iterator<ThingDmPropertySnapshot> 
                     productId, thingId, begin, end, identifier, response.getData().getNextValid(), response.getData().getList().size(), batch
             );
 
-        } catch (ClientException cause) {
+        } catch (ThingPlatformException cause) {
             throw new ThingPlatformException(
                     String.format("/%s/%s get property error, identifier=%s", productId, thingId, identifier),
                     cause

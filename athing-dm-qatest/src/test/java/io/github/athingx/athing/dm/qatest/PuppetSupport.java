@@ -14,13 +14,13 @@ import io.github.athingx.athing.dm.thing.builder.ThingDmBuilder;
 import io.github.athingx.athing.platform.api.ThingPlatform;
 import io.github.athingx.athing.platform.api.message.ThingReplyMessage;
 import io.github.athingx.athing.platform.builder.ThingPlatformBuilder;
-import io.github.athingx.athing.platform.builder.client.AliyunIAcsClientFactory;
+import io.github.athingx.athing.platform.builder.client.AliyunThingPlatformClientFactory;
 import io.github.athingx.athing.platform.builder.message.AliyunJmsConnectionFactory;
 import io.github.athingx.athing.platform.builder.message.AliyunThingMessageConsumerFactory;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.ThingPath;
 import io.github.athingx.athing.thing.builder.ThingBuilder;
-import io.github.athingx.athing.thing.builder.mqtt.AliyunMqttClientFactory;
+import io.github.athingx.athing.thing.builder.client.DefaultMqttClientFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -40,15 +40,16 @@ public class PuppetSupport implements LoadingProperties {
     @BeforeClass
     public static void _before_class() throws Exception {
         thing = new ThingBuilder(new ThingPath(PRODUCT_ID, THING_ID))
-                .clientFactory(new AliyunMqttClientFactory()
+                .client(new DefaultMqttClientFactory()
                         .remote(THING_REMOTE)
-                        .secret(THING_SECRET))
+                        .secret(THING_SECRET)
+                )
                 .build();
         platform = new ThingPlatformBuilder()
-                .clientFactory(new AliyunIAcsClientFactory()
+                .client(new AliyunThingPlatformClientFactory()
                         .identity(PLATFORM_IDENTITY)
                         .secret(PLATFORM_SECRET))
-                .consumerFactory(new AliyunThingMessageConsumerFactory()
+                .consumer(new AliyunThingMessageConsumerFactory()
                         .queue(PLATFORM_JMS_GROUP)
                         .connection(new AliyunJmsConnectionFactory()
                                 .queue(PLATFORM_JMS_GROUP)
@@ -66,8 +67,7 @@ public class PuppetSupport implements LoadingProperties {
 
     private static void setup(Thing thing, ThingPlatform platform) throws Exception {
         thingDm = new ThingDmBuilder()
-                .build(thing)
-                .get();
+                .build(thing);
 
         new ThingDmPlatformBuilder()
                 .product(PRODUCT_ID, EchoComp.class, LightComp.class)

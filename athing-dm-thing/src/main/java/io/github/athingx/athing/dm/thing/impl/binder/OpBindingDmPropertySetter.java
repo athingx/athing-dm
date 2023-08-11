@@ -10,10 +10,11 @@ import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.dm.common.util.FeatureCodec;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
-import io.github.athingx.athing.thing.api.op.OpBind;
-import io.github.athingx.athing.thing.api.op.OpBindable;
-import io.github.athingx.athing.thing.api.op.OpBinder;
+import io.github.athingx.athing.thing.api.op.OpData;
 import io.github.athingx.athing.thing.api.op.OpReply;
+import io.github.athingx.athing.thing.api.op.OpRequest;
+import io.github.athingx.athing.thing.api.op.ThingOpBinder;
+import io.github.athingx.athing.thing.api.op.function.OpMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,50 +23,41 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.athingx.athing.thing.api.function.CompletableFutureFn.whenCompleted;
-import static io.github.athingx.athing.thing.api.function.ThingFn.mappingByteToJson;
+import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingBytesToJson;
+import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingJsonToOpRequest;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class PropertySetOpBinder implements OpBinder<OpBind> {
+public class OpBindingDmPropertySetter implements OpBinding<ThingOpBinder> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Thing thing;
     private final ThingDmCompContainer container;
 
-    public PropertySetOpBinder(Thing thing, ThingDmCompContainer container) {
-        this.thing = thing;
+    public OpBindingDmPropertySetter(ThingDmCompContainer container) {
         this.container = container;
     }
 
     @Override
-    public CompletableFuture<OpBind> bind(OpBindable bindable) {
-        return bindable
-                .binding("/sys/%s/thing/service/property/set".formatted(thing.path().toURN()))
-                .map(mappingByteToJson(UTF_8))
-                .bind((topic, json) -> {
-
-                    final JsonObject requestJsonObject = JsonParser.parseString(json).getAsJsonObject();
-                    final String token = requestJsonObject.get("id").getAsString();
-                    final Set<String> successIds = batchSetProperties(token, requestJsonObject.getAsJsonObject("params"));
-                    final String message = FeatureCodec.codec.toString(new HashMap<>() {{
-                        put(FeatureKeys.KEY_SET_PROPERTIES_SUCCESS_IDS, String.join(",", successIds));
-                    }});
-
-                    thing.op().post(topic + "_reply", OpReply.success(token, message))
-                            .whenComplete(whenCompleted(
-                                    v -> logger.debug("{}/dm/property/set success; token={};identities={};", thing.path(), token, successIds),
-                                    ex -> logger.warn("{}/dm/property/set failure; token={};identities={};", thing.path(), token, successIds, ex)
-                            ));
-
+    public CompletableFuture<ThingOpBinder> bind(Thing thing) {
+        return thing.op().bind("/sys/%s/thing/service/property/set".formatted(thing.path().toURN()))
+                .map(mappingBytesToJson(UTF_8))
+                .map(mappingJsonToOpRequest(JsonObject.class))
+                .consumer((topic, request) -> {
+                    final var successIds = batchSetProperties(thing, request);
+                    thing.op().post("/sys/%s/thing/service/property/set_reply".formatted(thing.path().toURN()), OpReply.succeed(
+                            request.token(),
+                            null,
+                            FeatureCodec.codec.toString(new HashMap<>() {{
+                                put(FeatureKeys.KEY_SET_PROPERTIES_SUCCESS_IDS, String.join(",", successIds));
+                            }})
+                    ));
                 });
     }
 
-    private Set<String> batchSetProperties(String token, JsonObject paramsJsonObject) {
+    private Set<String> batchSetProperties(Thing thing, OpRequest<JsonObject> request) {
 
         final Set<String> successIds = new LinkedHashSet<>();
-        if (null == paramsJsonObject) {
-            return successIds;
-        }
+        final var token = request.token();
+        final var paramsJsonObject = request.params();
 
         // 批量设置属性
         paramsJsonObject.entrySet().forEach(entry -> {

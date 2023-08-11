@@ -1,6 +1,6 @@
 package io.github.athingx.athing.dm.qatest;
 
-import io.github.athingx.athing.dm.common.ThingDmCodes;
+import io.github.athingx.athing.common.ThingCodes;
 import io.github.athingx.athing.dm.platform.domain.SortOrder;
 import io.github.athingx.athing.dm.platform.helper.DmReturn;
 import io.github.athingx.athing.dm.platform.helper.DmReturnHelper;
@@ -37,7 +37,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         Assert.assertEquals(PRODUCT_ID, message.getProductId());
         Assert.assertEquals(THING_ID, message.getThingId());
         Assert.assertTrue(message.getTimestamp() > 0);
-        Assert.assertEquals(ThingDmCodes.OK, message.getCode());
+        Assert.assertEquals(ThingCodes.OK, message.getCode());
         Assert.assertTrue(message.getData() instanceof EchoComp.Echo);
         if (message.getData() instanceof EchoComp.Echo asyncResp) {
             Assert.assertEquals(req.words(), asyncResp.words());
@@ -55,7 +55,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         Assert.assertEquals(PRODUCT_ID, message.getProductId());
         Assert.assertEquals(THING_ID, message.getThingId());
         Assert.assertTrue(message.getTimestamp() > 0);
-        Assert.assertEquals(ThingDmCodes.OK, message.getCode());
+        Assert.assertEquals(ThingCodes.OK, message.getCode());
 
     }
 
@@ -73,7 +73,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         Assert.assertEquals(PRODUCT_ID, message.getProductId());
         Assert.assertEquals(THING_ID, message.getThingId());
         Assert.assertTrue(message.getTimestamp() > 0);
-        Assert.assertEquals(ThingDmCodes.OK, message.getCode());
+        Assert.assertEquals(ThingCodes.OK, message.getCode());
 
     }
 
@@ -148,7 +148,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         Assert.assertNull(dmReturn.data().get());
         final ThingDmReplyServiceReturnMessage message = waitingForReplyMessageByToken(dmReturn.token());
         Assert.assertEquals("throwInMethod", message.getDesc());
-        Assert.assertEquals(500, message.getCode());
+        Assert.assertEquals(ThingCodes.REQUEST_ERROR, message.getCode());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         Assert.assertNull(dmReturn.data().get());
         final ThingDmReplyServiceReturnMessage message = waitingForReplyMessageByToken(dmReturn.token());
         Assert.assertEquals("throwsInFuture", message.getDesc());
-        Assert.assertEquals(500, message.getCode());
+        Assert.assertEquals(ThingCodes.REQUEST_ERROR, message.getCode());
     }
 
 }

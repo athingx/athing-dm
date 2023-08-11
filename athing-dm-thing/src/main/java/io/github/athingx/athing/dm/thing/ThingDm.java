@@ -7,6 +7,7 @@ import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
 import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import io.github.athingx.athing.thing.api.op.OpReply;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -29,7 +30,7 @@ public interface ThingDm {
      * @param identifiers 设备属性ID集合
      * @return 投递应答，应答内容为最终本次参与投递的设备属性ID集合
      */
-    CompletableFuture<OpReply<Set<Identifier>>> properties(Identifier... identifiers);
+    CompletableFuture<OpReply<Map<Identifier, Object>>> properties(Identifier... identifiers);
 
     /**
      * 定义设备组件

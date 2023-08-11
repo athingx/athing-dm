@@ -1,6 +1,5 @@
 package io.github.athingx.athing.dm.platform.impl;
 
-import com.aliyuncs.v5.IAcsClient;
 import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.common.meta.ThDmCompMeta;
@@ -10,6 +9,7 @@ import io.github.athingx.athing.dm.platform.domain.ThingDmPropertySnapshot;
 import io.github.athingx.athing.dm.platform.impl.product.ThDmProductMeta;
 import io.github.athingx.athing.dm.platform.impl.product.ThDmProductStub;
 import io.github.athingx.athing.platform.api.ThingPlatformException;
+import io.github.athingx.athing.platform.api.client.ThingPlatformClient;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -24,7 +24,7 @@ public class ThingDmTemplateImpl implements ThingDmTemplate {
     private final String productId;
     private final String thingId;
 
-    public ThingDmTemplateImpl(Map<Method, ThingDmMethodHandler> handlerMap, IAcsClient client, ThDmProductMeta meta, String thingId) {
+    public ThingDmTemplateImpl(Map<Method, ThingDmMethodHandler> handlerMap, ThingPlatformClient client, ThDmProductMeta meta, String thingId) {
         this.handlerMap = handlerMap;
         this.stub = new ThDmProductStub(client, meta);
         this.productId = meta.getProductId();
