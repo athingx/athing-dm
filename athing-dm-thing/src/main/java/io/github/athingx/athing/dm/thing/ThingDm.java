@@ -8,7 +8,6 @@ import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import io.github.athingx.athing.thing.api.op.OpReply;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
