@@ -8,8 +8,8 @@ import io.github.athingx.athing.dm.thing.builder.ThingDmOption;
 import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
 import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import io.github.athingx.athing.dm.thing.dump.DumpToFn;
-import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmEventReporter;
-import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmPropertyReporter;
+import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmEventPoster;
+import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmPropertyPoster;
 import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmPropertySetter;
 import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmServiceInvoker;
 import io.github.athingx.athing.dm.thing.impl.define.DefineThDmCompImpl;
@@ -33,21 +33,38 @@ public class ThingDmImpl implements ThingDm {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
     private final ThingDmCompContainer container;
-    private final CompletableFuture<ThingOpCaller<ThingDmEvent<?>, OpReply<Void>>> eReporterF;
-    private final CompletableFuture<ThingOpCaller<Map<Identifier, Object>, OpReply<Void>>> pReporterF;
+    private final ThingOpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster;
+    private final ThingOpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster;
 
-    public ThingDmImpl(Thing thing, ThingDmOption option) {
+    public ThingDmImpl(Thing thing, ThingDmOption option) throws Exception {
         this.thing = thing;
         this.container = new ThingDmCompContainer(thing.path());
-        this.eReporterF = new OpBindingDmEventReporter(option).bind(thing);
-        this.pReporterF = new OpBindingDmPropertyReporter(option).bind(thing);
-        new OpBindingDmPropertySetter(container).bind(thing);
-        new OpBindingDmServiceInvoker(container).bind(thing);
+
+        // 绑定事件上报
+        this.ePoster = new OpBindingDmEventPoster(option).bind(thing)
+                .whenComplete((v, ex) -> logger.debug("{}/dm/event/poster bind completed!", thing.path(), ex))
+                .get();
+
+        // 绑定属性上报
+        this.pPoster = new OpBindingDmPropertyPoster(option).bind(thing)
+                .whenComplete((v, ex) -> logger.debug("{}/dm/property/poster bind completed!", thing.path(), ex))
+                .get();
+
+        // 绑定属性设置
+        new OpBindingDmPropertySetter(container).bind(thing)
+                .whenComplete((v, ex) -> logger.debug("{}/dm/property/setter bind completed!", thing.path(), ex))
+                .get();
+
+        // 绑定服务调用
+        new OpBindingDmServiceInvoker(container).bind(thing)
+                .whenComplete((v, ex) -> logger.debug("{}/dm/service/invoker bind completed!", thing.path(), ex))
+                .get();
+
     }
 
     @Override
     public CompletableFuture<OpReply<Void>> event(ThingDmEvent<?> event) {
-        return eReporterF.thenCompose(eReport -> eReport.call(event));
+        return ePoster.call(event);
     }
 
     @Override
@@ -60,14 +77,14 @@ public class ThingDmImpl implements ThingDm {
             // 获取模块
             final var stub = container.get(identifier.getComponentId());
             if (Objects.isNull(stub)) {
-                logger.warn("{}/dm/property report ignored; component not existed! identity={};", thing.path(), identifier.getComponentId());
+                logger.warn("{}/dm/property poster ignored; component not existed! identity={};", thing.path(), identifier.getComponentId());
                 continue;
             }
 
             // 获取属性元数据
             final var meta = stub.meta().getThDmPropertyMeta(identifier);
             if (Objects.isNull(meta)) {
-                logger.warn("{}/dm/property report ignored; property not existed! identity={};", thing.path(), identifier);
+                logger.warn("{}/dm/property poster ignored; property not existed! identity={};", thing.path(), identifier);
                 continue;
             }
 
@@ -78,13 +95,14 @@ public class ThingDmImpl implements ThingDm {
 
             // 获取设备属性失败
             catch (Exception cause) {
-                logger.warn("{}/dm/property report ignored; get value occur error! identity={}", thing.path(), identifier, cause);
+                logger.warn("{}/dm/property poster ignored; get value occur error! identity={}", thing.path(), identifier, cause);
             }
 
         }
 
-        return pReporterF.thenCompose(pReporter -> pReporter.call(propertyDataMap))
+        return pPoster.call(propertyDataMap)
                 .thenApply(reply -> OpReply.succeed(reply.token(), propertyDataMap));
+
     }
 
     @Override

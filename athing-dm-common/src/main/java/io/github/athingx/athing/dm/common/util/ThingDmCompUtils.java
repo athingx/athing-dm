@@ -140,7 +140,7 @@ public class ThingDmCompUtils {
 
         for (int length = string.length(); i < length; ++i) {
             char character = string.charAt(i);
-            if (Character.isUpperCase(character) && translation.length() != 0) {
+            if (Character.isUpperCase(character) && !translation.isEmpty()) {
                 translation.append("_");
             }
             translation.append(Character.toLowerCase(character));

@@ -28,7 +28,7 @@ public class ThingDmBuilder {
      * @param thing 设备
      * @return 设备模型构造
      */
-    public ThingDm build(Thing thing) {
+    public ThingDm build(Thing thing) throws Exception {
         return new ThingDmImpl(thing, option);
     }
 

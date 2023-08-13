@@ -22,7 +22,6 @@ import static io.github.athingx.athing.common.ThingCodes.REQUEST_ERROR;
 import static io.github.athingx.athing.dm.thing.impl.util.ExceptionUtils.getCause;
 import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingBytesToJson;
 import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingJsonToOpRequest;
-import static io.github.athingx.athing.thing.api.util.CompletableFutureUtils.whenCompleted;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.failedFuture;
@@ -39,7 +38,7 @@ public class OpBindingDmServiceInvoker implements OpBinding<ThingOpBinder> {
     @Override
     public CompletableFuture<? extends ThingOpBinder> bind(Thing thing) {
         final var asyncF = thing.op().bind("/sys/%s/thing/service/+".formatted(thing.path().toURN()))
-                .matches((topic, data) -> !topic.endsWith("_reply"))
+                .filter((topic, data) -> !topic.endsWith("_reply"))
                 .map(mappingBytesToJson(UTF_8))
                 .map(mappingJsonToOpRequest(JsonObject.class))
                 .consumer(onConsume(thing));
@@ -63,11 +62,7 @@ public class OpBindingDmServiceInvoker implements OpBinding<ThingOpBinder> {
                 final var identity = Optional.ofNullable(request.method())
                         .filter(method -> !method.isBlank())
                         .map(method -> method.replaceFirst("thing\\.service\\.", ""))
-                        .orElseThrow(() -> new OpReplyException(
-                                token,
-                                REQUEST_ERROR,
-                                "illegal method!"
-                        ));
+                        .orElseThrow(() -> new OpReplyException(token, REQUEST_ERROR, "illegal method!"));
 
                 // 校验标识是否合法
                 if (!Identifier.test(identity)) {
@@ -144,11 +139,8 @@ public class OpBindingDmServiceInvoker implements OpBinding<ThingOpBinder> {
                     .thenCompose(reply -> thing.op().post(rTopic, reply))
 
                     // 记录结果
-                    .whenComplete(whenCompleted(
-                            v -> logger.debug("{}/dm/service invoke success, token={};", thing, token),
-                            ex -> logger.warn("{}/dm/service invoke failure, token={};", thing, token, ex)
-                    ));
-
+                    .whenComplete((v, ex) ->
+                            logger.debug("{}/dm/service completed, token={};", thing.path(), token));
         };
     }
 

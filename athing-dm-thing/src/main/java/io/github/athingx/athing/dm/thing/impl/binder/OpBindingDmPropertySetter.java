@@ -61,7 +61,7 @@ public class OpBindingDmPropertySetter implements OpBinding<ThingOpBinder> {
 
             final String identity = entry.getKey();
             if (!Identifier.test(identity)) {
-                logger.warn("{}/dm/property/set ignored; illegal identity! token={};identity={};", thing.path(), token, identity);
+                logger.warn("{}/dm/property/setter ignored; illegal identity! token={};identity={};", thing.path(), token, identity);
                 return;
             }
 
@@ -70,20 +70,20 @@ public class OpBindingDmPropertySetter implements OpBinding<ThingOpBinder> {
             // 过滤掉未提供的组件
             final ThingDmCompContainer.Stub stub = container.get(identifier.getComponentId());
             if (null == stub) {
-                logger.warn("{}/dm/property/set ignored; comp not provided! token={};identity={};", thing.path(), token, identity);
+                logger.warn("{}/dm/property/setter ignored; comp not provided! token={};identity={};", thing.path(), token, identity);
                 return;
             }
 
             // 过滤掉未提供的属性
             final ThDmPropertyMeta meta = stub.meta().getIdentityThDmPropertyMetaMap().get(identifier);
             if (null == meta) {
-                logger.warn("{}/dm/property/set ignored; property not provided! token={};identity={};", thing.path(), token, identity);
+                logger.warn("{}/dm/property/setter ignored; property not provided! token={};identity={};", thing.path(), token, identity);
                 return;
             }
 
             // 过滤掉只读属性
             if (meta.isReadonly()) {
-                logger.warn("{}/dm/property/set ignored; property is readonly! token={};identity={};", thing.path(), token, identity);
+                logger.warn("{}/dm/property/setter ignored; property is readonly! token={};identity={};", thing.path(), token, identity);
                 return;
             }
 
@@ -96,9 +96,9 @@ public class OpBindingDmPropertySetter implements OpBinding<ThingOpBinder> {
                         GsonFactory.getGson().fromJson(entry.getValue(), meta.getPropertyType())
                 );
                 successIds.add(identity);
-                logger.debug("{}/dm/property/set success; token={};identity={};", thing.path(), token, identity);
+                logger.debug("{}/dm/property/setter success; token={};identity={};", thing.path(), token, identity);
             } catch (Throwable cause) {
-                logger.warn("{}/dm/property/set ignored; set occur error! token={};identity={};", thing.path(), token, identity, cause);
+                logger.warn("{}/dm/property/setter ignored; set value occur error! token={};identity={};", thing.path(), token, identity, cause);
             } finally {
                 DmRuntime.exit();
             }
