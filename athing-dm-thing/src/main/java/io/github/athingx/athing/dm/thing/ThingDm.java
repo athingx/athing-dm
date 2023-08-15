@@ -6,7 +6,6 @@ import io.github.athingx.athing.dm.api.ThingDmEvent;
 import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
 import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import io.github.athingx.athing.thing.api.op.OpReply;
-import io.github.athingx.athing.thing.api.plugin.ThingPlugin;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
