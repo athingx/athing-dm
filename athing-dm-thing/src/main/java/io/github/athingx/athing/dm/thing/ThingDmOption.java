@@ -1,4 +1,4 @@
-package io.github.athingx.athing.dm.thing.builder;
+package io.github.athingx.athing.dm.thing;
 
 /**
  * 设备模型参数

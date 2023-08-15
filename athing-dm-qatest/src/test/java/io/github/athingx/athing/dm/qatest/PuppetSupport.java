@@ -10,7 +10,7 @@ import io.github.athingx.athing.dm.qatest.puppet.EchoComp;
 import io.github.athingx.athing.dm.qatest.puppet.LightComp;
 import io.github.athingx.athing.dm.qatest.puppet.impl.PuppetCompImpl;
 import io.github.athingx.athing.dm.thing.ThingDm;
-import io.github.athingx.athing.dm.thing.builder.ThingDmBuilder;
+import io.github.athingx.athing.dm.thing.ThingDmBuilder;
 import io.github.athingx.athing.platform.api.ThingPlatform;
 import io.github.athingx.athing.platform.api.message.ThingReplyMessage;
 import io.github.athingx.athing.platform.builder.ThingPlatformBuilder;
@@ -67,7 +67,8 @@ public class PuppetSupport implements LoadingProperties {
 
     private static void setup(Thing thing, ThingPlatform platform) throws Exception {
         thingDm = new ThingDmBuilder()
-                .build(thing);
+                .build(thing)
+                .get();
 
         new ThingDmPlatformBuilder()
                 .product(PRODUCT_ID, EchoComp.class, LightComp.class)

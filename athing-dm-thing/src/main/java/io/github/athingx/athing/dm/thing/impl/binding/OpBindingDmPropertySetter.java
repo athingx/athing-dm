@@ -1,4 +1,4 @@
-package io.github.athingx.athing.dm.thing.impl.binder;
+package io.github.athingx.athing.dm.thing.impl.binding;
 
 import com.google.gson.JsonObject;
 import io.github.athingx.athing.common.gson.GsonFactory;

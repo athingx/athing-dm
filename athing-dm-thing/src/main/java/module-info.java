@@ -1,6 +1,5 @@
 module athing.dm.thing {
 
-    exports io.github.athingx.athing.dm.thing.builder;
     exports io.github.athingx.athing.dm.thing.define;
     exports io.github.athingx.athing.dm.thing.dump;
     exports io.github.athingx.athing.dm.thing;

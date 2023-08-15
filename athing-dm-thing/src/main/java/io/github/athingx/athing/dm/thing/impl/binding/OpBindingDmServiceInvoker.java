@@ -1,4 +1,4 @@
-package io.github.athingx.athing.dm.thing.impl.binder;
+package io.github.athingx.athing.dm.thing.impl.binding;
 
 import com.google.gson.JsonObject;
 import io.github.athingx.athing.common.gson.GsonFactory;
@@ -37,16 +37,27 @@ public class OpBindingDmServiceInvoker implements OpBinding<ThingOpBinder> {
 
     @Override
     public CompletableFuture<? extends ThingOpBinder> bind(Thing thing) {
+
+        // 绑定异步服务调用
         final var asyncF = thing.op().bind("/sys/%s/thing/service/+".formatted(thing.path().toURN()))
                 .filter((topic, data) -> !topic.endsWith("_reply"))
                 .map(mappingBytesToJson(UTF_8))
                 .map(mappingJsonToOpRequest(JsonObject.class))
                 .consumer(onConsume(thing));
+
+        // 绑定同步服务调用
         final var syncF = thing.op().bind("/ext/rrpc/+/sys/%s/thing/service/+".formatted(thing.path().toURN()))
                 .map(mappingBytesToJson(UTF_8))
                 .map(mappingJsonToOpRequest(JsonObject.class))
                 .consumer(onConsume(thing));
-        return asyncF.thenCombine(syncF, (async, sync) -> () -> async.unbind().thenCombine(sync.unbind(), (_async, _sync) -> null));
+
+        return CompletableFuture.allOf(asyncF, syncF)
+                .thenApply(unused -> () ->
+                        CompletableFuture.allOf(
+                                asyncF.join().unbind(),
+                                syncF.join().unbind()
+                        ));
+
     }
 
     private OpConsumer<OpRequest<JsonObject>> onConsume(Thing thing) {

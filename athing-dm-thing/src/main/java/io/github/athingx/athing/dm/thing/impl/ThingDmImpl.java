@@ -4,14 +4,9 @@ import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.api.ThingDmEvent;
 import io.github.athingx.athing.dm.thing.ThingDm;
-import io.github.athingx.athing.dm.thing.builder.ThingDmOption;
 import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
 import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import io.github.athingx.athing.dm.thing.dump.DumpToFn;
-import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmEventPoster;
-import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmPropertyPoster;
-import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmPropertySetter;
-import io.github.athingx.athing.dm.thing.impl.binder.OpBindingDmServiceInvoker;
 import io.github.athingx.athing.dm.thing.impl.define.DefineThDmCompImpl;
 import io.github.athingx.athing.dm.thing.impl.tsl.TslDumper;
 import io.github.athingx.athing.thing.api.Thing;
@@ -36,30 +31,14 @@ public class ThingDmImpl implements ThingDm {
     private final ThingOpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster;
     private final ThingOpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster;
 
-    public ThingDmImpl(Thing thing, ThingDmOption option) throws Exception {
+    public ThingDmImpl(final Thing thing,
+                       final ThingDmCompContainer container,
+                       final ThingOpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster,
+                       final ThingOpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster) {
         this.thing = thing;
-        this.container = new ThingDmCompContainer(thing.path());
-
-        // 绑定事件上报
-        this.ePoster = new OpBindingDmEventPoster(option).bind(thing)
-                .whenComplete((v, ex) -> logger.debug("{}/dm/event/poster bind completed!", thing.path(), ex))
-                .get();
-
-        // 绑定属性上报
-        this.pPoster = new OpBindingDmPropertyPoster(option).bind(thing)
-                .whenComplete((v, ex) -> logger.debug("{}/dm/property/poster bind completed!", thing.path(), ex))
-                .get();
-
-        // 绑定属性设置
-        new OpBindingDmPropertySetter(container).bind(thing)
-                .whenComplete((v, ex) -> logger.debug("{}/dm/property/setter bind completed!", thing.path(), ex))
-                .get();
-
-        // 绑定服务调用
-        new OpBindingDmServiceInvoker(container).bind(thing)
-                .whenComplete((v, ex) -> logger.debug("{}/dm/service/invoker bind completed!", thing.path(), ex))
-                .get();
-
+        this.container = container;
+        this.ePoster = ePoster;
+        this.pPoster = pPoster;
     }
 
     @Override
