@@ -131,12 +131,12 @@ public class OpBindingDmServiceInvoker implements OpBinding<ThingOpBinder> {
 
                         // 处理OpReply异常
                         if (ex instanceof OpReplyException orCause) {
-                            return OpReply.failure(orCause);
+                            return OpReply.fail(orCause);
                         }
 
                         // 处理常规异常
                         else if (ex instanceof Exception) {
-                            return OpReply.failure(token, REQUEST_ERROR, getCause(ex).getMessage());
+                            return OpReply.fail(token, REQUEST_ERROR, getCause(ex).getMessage());
                         }
 
                         // 处理正常返回
