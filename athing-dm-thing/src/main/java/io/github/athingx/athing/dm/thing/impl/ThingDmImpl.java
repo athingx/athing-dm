@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,15 +31,19 @@ public class ThingDmImpl implements ThingDm {
     private final ThingDmCompContainer container;
     private final ThingOpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster;
     private final ThingOpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster;
+    private final Supplier<CompletableFuture<Void>> uninstaller;
+    private final CompletableFuture<Void> uninstallF = new CompletableFuture<>();
 
     public ThingDmImpl(final Thing thing,
                        final ThingDmCompContainer container,
                        final ThingOpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster,
-                       final ThingOpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster) {
+                       final ThingOpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster,
+                       final Supplier<CompletableFuture<Void>> uninstaller) {
         this.thing = thing;
         this.container = container;
         this.ePoster = ePoster;
         this.pPoster = pPoster;
+        this.uninstaller = uninstaller;
     }
 
     @Override
@@ -122,6 +127,15 @@ public class ThingDmImpl implements ThingDm {
             }
 
         };
+    }
+
+    @Override
+    public CompletableFuture<Void> uninstall() {
+        if (uninstallF.complete(null)) {
+            return uninstaller.get();
+        } else {
+            throw new IllegalStateException("already uninstalled!");
+        }
     }
 
 }

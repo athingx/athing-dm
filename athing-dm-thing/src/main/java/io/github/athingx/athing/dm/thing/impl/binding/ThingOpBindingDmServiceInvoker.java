@@ -7,10 +7,7 @@ import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
 import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
-import io.github.athingx.athing.thing.api.op.OpReply;
-import io.github.athingx.athing.thing.api.op.OpReplyException;
-import io.github.athingx.athing.thing.api.op.OpRequest;
-import io.github.athingx.athing.thing.api.op.ThingOpBinder;
+import io.github.athingx.athing.thing.api.op.*;
 import io.github.athingx.athing.thing.api.op.function.OpConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +23,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.failedFuture;
 
-public class OpBindingDmServiceInvoker implements OpBinding<ThingOpBinder> {
+public class ThingOpBindingDmServiceInvoker implements ThingOpBinding<ThingOpBinder> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ThingDmCompContainer container;
 
-    public OpBindingDmServiceInvoker(ThingDmCompContainer container) {
+    public ThingOpBindingDmServiceInvoker(ThingDmCompContainer container) {
         this.container = container;
     }
 
     @Override
-    public CompletableFuture<? extends ThingOpBinder> bind(Thing thing) {
+    public CompletableFuture<ThingOpBinder> bind(Thing thing) {
 
         // 绑定异步服务调用
         final var asyncF = thing.op().bind("/sys/%s/thing/service/+".formatted(thing.path().toURN()))

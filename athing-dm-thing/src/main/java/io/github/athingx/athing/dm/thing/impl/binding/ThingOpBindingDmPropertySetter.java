@@ -12,6 +12,7 @@ import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.op.OpReply;
 import io.github.athingx.athing.thing.api.op.OpRequest;
 import io.github.athingx.athing.thing.api.op.ThingOpBinder;
+import io.github.athingx.athing.thing.api.op.ThingOpBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +25,12 @@ import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingByt
 import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingJsonToOpRequest;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class OpBindingDmPropertySetter implements OpBinding<ThingOpBinder> {
+public class ThingOpBindingDmPropertySetter implements ThingOpBinding<ThingOpBinder> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ThingDmCompContainer container;
 
-    public OpBindingDmPropertySetter(ThingDmCompContainer container) {
+    public ThingOpBindingDmPropertySetter(ThingDmCompContainer container) {
         this.container = container;
     }
 

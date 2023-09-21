@@ -6,6 +6,7 @@ import io.github.athingx.athing.dm.api.ThingDmEvent;
 import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
 import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import io.github.athingx.athing.thing.api.op.OpReply;
+import io.github.athingx.athing.thing.api.plugin.ThingPlugin;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -13,7 +14,9 @@ import java.util.concurrent.CompletableFuture;
 /**
  * 设备模型
  */
-public interface ThingDm {
+public interface ThingDm extends ThingPlugin {
+
+    String THING_ID = "athingx.thing.dm";
 
     /**
      * 投递设备事件
