@@ -73,7 +73,7 @@ public class ThingDmTemplateImpl implements ThingDmTemplate {
 
             /*
              * 以下方法将会被规避
-             * 1. 非本接口生命的方法
+             * 1. 非本接口声明的方法
              * 2. 本接口的default方法
              */
             if (method.getDeclaringClass() != type || method.isDefault()) {

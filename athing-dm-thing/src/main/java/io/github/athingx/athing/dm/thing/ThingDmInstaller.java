@@ -37,6 +37,7 @@ public class ThingDmInstaller implements ThingPluginInstaller<ThingDm> {
         return CompletableFuture.allOf(ePosterF, pPosterF, pSetterF, sInvokerF)
                 .thenApply(unused -> new ThingDmImpl(
                         thing,
+                        option,
                         container,
                         ePosterF.join(),
                         pPosterF.join(),

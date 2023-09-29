@@ -4,6 +4,7 @@ import io.github.athingx.athing.dm.api.Identifier;
 import io.github.athingx.athing.dm.api.ThingDmComp;
 import io.github.athingx.athing.dm.api.ThingDmEvent;
 import io.github.athingx.athing.dm.thing.ThingDm;
+import io.github.athingx.athing.dm.thing.ThingDmOption;
 import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
 import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import io.github.athingx.athing.dm.thing.dump.DumpToFn;
@@ -24,10 +25,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 public class ThingDmImpl implements ThingDm {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
+    private final ThingDmOption option;
     private final ThingDmCompContainer container;
     private final OpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster;
     private final OpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster;
@@ -35,11 +39,13 @@ public class ThingDmImpl implements ThingDm {
     private final CompletableFuture<Void> uninstallF = new CompletableFuture<>();
 
     public ThingDmImpl(final Thing thing,
+                       final ThingDmOption option,
                        final ThingDmCompContainer container,
                        final OpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster,
                        final OpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster,
                        final Supplier<CompletableFuture<Void>> uninstaller) {
         this.thing = thing;
+        this.option = option;
         this.container = container;
         this.ePoster = ePoster;
         this.pPoster = pPoster;
@@ -48,7 +54,8 @@ public class ThingDmImpl implements ThingDm {
 
     @Override
     public CompletableFuture<OpReply<Void>> event(ThingDmEvent<?> event) {
-        return ePoster.call(event);
+        return ePoster.call(event)
+                .orTimeout(option.getEventTimeoutMs(), MILLISECONDS);
     }
 
     @Override
@@ -85,6 +92,7 @@ public class ThingDmImpl implements ThingDm {
         }
 
         return pPoster.call(propertyDataMap)
+                .orTimeout(option.getPropertyTimeoutMs(), MILLISECONDS)
                 .thenApply(reply -> OpReply.succeed(reply.token(), propertyDataMap));
 
     }
