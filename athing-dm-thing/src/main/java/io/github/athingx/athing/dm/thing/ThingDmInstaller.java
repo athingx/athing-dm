@@ -2,10 +2,10 @@ package io.github.athingx.athing.dm.thing;
 
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.dm.thing.impl.ThingDmImpl;
-import io.github.athingx.athing.dm.thing.impl.binding.OpBindingForDmEventPoster;
 import io.github.athingx.athing.dm.thing.impl.binding.OpBindingDmPropertyPoster;
 import io.github.athingx.athing.dm.thing.impl.binding.OpBindingDmPropertySetter;
 import io.github.athingx.athing.dm.thing.impl.binding.OpBindingDmServiceInvoker;
+import io.github.athingx.athing.dm.thing.impl.binding.OpBindingForDmEventPoster;
 import io.github.athingx.athing.thing.api.Thing;
 import io.github.athingx.athing.thing.api.plugin.ThingPluginInstaller;
 
