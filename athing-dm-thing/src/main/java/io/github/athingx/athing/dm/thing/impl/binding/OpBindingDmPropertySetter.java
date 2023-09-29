@@ -9,10 +9,10 @@ import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.dm.common.util.FeatureCodec;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
+import io.github.athingx.athing.thing.api.op.OpBinder;
+import io.github.athingx.athing.thing.api.op.OpBinding;
 import io.github.athingx.athing.thing.api.op.OpReply;
 import io.github.athingx.athing.thing.api.op.OpRequest;
-import io.github.athingx.athing.thing.api.op.ThingOpBinder;
-import io.github.athingx.athing.thing.api.op.ThingOpBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,34 +21,34 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingBytesToJson;
-import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingJsonToOpRequest;
+import static io.github.athingx.athing.thing.api.op.Codec.codecBytesToJson;
+import static io.github.athingx.athing.thing.api.op.Codec.codecJsonToOpServices;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ThingOpBindingDmPropertySetter implements ThingOpBinding<ThingOpBinder> {
+public class OpBindingDmPropertySetter implements OpBinding<OpBinder> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ThingDmCompContainer container;
 
-    public ThingOpBindingDmPropertySetter(ThingDmCompContainer container) {
+    public OpBindingDmPropertySetter(ThingDmCompContainer container) {
         this.container = container;
     }
 
     @Override
-    public CompletableFuture<ThingOpBinder> bind(Thing thing) {
-        return thing.op().bind("/sys/%s/thing/service/property/set".formatted(thing.path().toURN()))
-                .map(mappingBytesToJson(UTF_8))
-                .map(mappingJsonToOpRequest(JsonObject.class))
-                .consumer((topic, request) -> {
+    public CompletableFuture<OpBinder> bind(Thing thing) {
+        return thing.op()
+                .codec(codecBytesToJson(UTF_8))
+                .codec(codecJsonToOpServices(JsonObject.class, Void.class))
+                .self(op -> op.consumer("/sys/%s/thing/service/property/set".formatted(thing.path().toURN()), (topic, request) -> {
                     final var successIds = batchSetProperties(thing, request);
-                    thing.op().post("/sys/%s/thing/service/property/set_reply".formatted(thing.path().toURN()), OpReply.succeed(
+                    op.post("/sys/%s/thing/service/property/set_reply".formatted(thing.path().toURN()), OpReply.succeed(
                             request.token(),
                             null,
                             FeatureCodec.codec.toString(new HashMap<>() {{
                                 put(FeatureKeys.KEY_SET_PROPERTIES_SUCCESS_IDS, String.join(",", successIds));
                             }})
                     ));
-                });
+                }));
     }
 
     private Set<String> batchSetProperties(Thing thing, OpRequest<JsonObject> request) {

@@ -90,7 +90,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         Assert.assertNotNull(waitingForPostMessageByToken(thingDm.properties(colorId).get().token()));
 
         // 等待数据同步
-        Thread.sleep(500);
+        Thread.sleep(5000);
 
         // 获取设备上报的颜色
         Assert.assertEquals(LightComp.Color.BLUE, lightComp.getColor());
@@ -110,7 +110,7 @@ public class ThingDmTemplateTestCase extends PuppetSupport {
         Assert.assertNotNull(waitingForPostMessageByToken(thingDm.properties(colorId).get().token()));
 
         // 等待数据同步
-        Thread.sleep(500);
+        Thread.sleep(5000);
 
         final var propertyMap = thingDmTemplate.batchGetProperties(new HashSet<>() {{
             add(colorId);

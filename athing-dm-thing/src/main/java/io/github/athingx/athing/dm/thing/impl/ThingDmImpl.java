@@ -10,8 +10,8 @@ import io.github.athingx.athing.dm.thing.dump.DumpToFn;
 import io.github.athingx.athing.dm.thing.impl.define.DefineThDmCompImpl;
 import io.github.athingx.athing.dm.thing.impl.tsl.TslDumper;
 import io.github.athingx.athing.thing.api.Thing;
+import io.github.athingx.athing.thing.api.op.OpCaller;
 import io.github.athingx.athing.thing.api.op.OpReply;
-import io.github.athingx.athing.thing.api.op.ThingOpCaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,15 +29,15 @@ public class ThingDmImpl implements ThingDm {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Thing thing;
     private final ThingDmCompContainer container;
-    private final ThingOpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster;
-    private final ThingOpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster;
+    private final OpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster;
+    private final OpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster;
     private final Supplier<CompletableFuture<Void>> uninstaller;
     private final CompletableFuture<Void> uninstallF = new CompletableFuture<>();
 
     public ThingDmImpl(final Thing thing,
                        final ThingDmCompContainer container,
-                       final ThingOpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster,
-                       final ThingOpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster,
+                       final OpCaller<ThingDmEvent<?>, OpReply<Void>> ePoster,
+                       final OpCaller<Map<Identifier, Object>, OpReply<Void>> pPoster,
                        final Supplier<CompletableFuture<Void>> uninstaller) {
         this.thing = thing;
         this.container = container;

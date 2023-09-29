@@ -7,46 +7,60 @@ import io.github.athingx.athing.dm.common.meta.ThDmServiceMeta;
 import io.github.athingx.athing.dm.common.runtime.DmRuntime;
 import io.github.athingx.athing.dm.thing.impl.ThingDmCompContainer;
 import io.github.athingx.athing.thing.api.Thing;
+import io.github.athingx.athing.thing.api.ThingPath;
 import io.github.athingx.athing.thing.api.op.*;
-import io.github.athingx.athing.thing.api.op.function.OpConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import static io.github.athingx.athing.common.ThingCodes.REQUEST_ERROR;
-import static io.github.athingx.athing.dm.thing.impl.util.ExceptionUtils.getCause;
-import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingBytesToJson;
-import static io.github.athingx.athing.thing.api.op.function.OpMapper.mappingJsonToOpRequest;
+import static io.github.athingx.athing.common.util.ExceptionUtils.optionalCauseBy;
+import static io.github.athingx.athing.thing.api.op.Codec.codecBytesToJson;
+import static io.github.athingx.athing.thing.api.op.Codec.codecJsonToOpServices;
+import static io.github.athingx.athing.thing.api.op.Decoder.filter;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.failedFuture;
 
-public class ThingOpBindingDmServiceInvoker implements ThingOpBinding<ThingOpBinder> {
+public class OpBindingDmServiceInvoker implements OpBinding<OpBinder> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ThingDmCompContainer container;
 
-    public ThingOpBindingDmServiceInvoker(ThingDmCompContainer container) {
+    public OpBindingDmServiceInvoker(ThingDmCompContainer container) {
         this.container = container;
     }
 
     @Override
-    public CompletableFuture<ThingOpBinder> bind(Thing thing) {
+    public CompletableFuture<OpBinder> bind(Thing thing) {
+
+        // 路径
+        final var path = thing.path();
 
         // 绑定异步服务调用
-        final var asyncF = thing.op().bind("/sys/%s/thing/service/+".formatted(thing.path().toURN()))
-                .filter((topic, data) -> !topic.endsWith("_reply"))
-                .map(mappingBytesToJson(UTF_8))
-                .map(mappingJsonToOpRequest(JsonObject.class))
-                .consumer(onConsume(thing));
+        final var asyncF = thing.op()
+                .decode(filter((topic, data) -> !topic.endsWith("_reply")))
+                .codec(codecBytesToJson(UTF_8))
+                .codec(codecJsonToOpServices(JsonObject.class, Object.class))
+                .self(op -> op.consumer(
+                        "/sys/%s/thing/service/+".formatted(path.toURN()),
+                        onConsume(path, op)
+                ));
+
 
         // 绑定同步服务调用
-        final var syncF = thing.op().bind("/ext/rrpc/+/sys/%s/thing/service/+".formatted(thing.path().toURN()))
-                .map(mappingBytesToJson(UTF_8))
-                .map(mappingJsonToOpRequest(JsonObject.class))
-                .consumer(onConsume(thing));
+        final var syncF = thing.op()
+                .codec(codecBytesToJson(UTF_8))
+                .codec(codecJsonToOpServices(JsonObject.class, Object.class))
+                .self(op -> op.consumer(
+                        "/ext/rrpc/+/sys/%s/thing/service/+".formatted(path.toURN()),
+                        onConsume(path, op)
+                ));
 
         return CompletableFuture.allOf(asyncF, syncF)
                 .thenApply(unused -> () ->
@@ -57,7 +71,7 @@ public class ThingOpBindingDmServiceInvoker implements ThingOpBinding<ThingOpBin
 
     }
 
-    private OpConsumer<OpRequest<JsonObject>> onConsume(Thing thing) {
+    private BiConsumer<String, OpRequest<JsonObject>> onConsume(ThingPath path, ThingOp<OpReply<Object>, OpRequest<JsonObject>> op) {
         return (topic, request) -> {
 
             final var token = request.token();
@@ -67,17 +81,7 @@ public class ThingOpBindingDmServiceInvoker implements ThingOpBinding<ThingOpBin
             try {
 
                 // 解析服务标识
-                final var identity = Optional.ofNullable(request.method())
-                        .filter(method -> !method.isBlank())
-                        .map(method -> method.replaceFirst("thing\\.service\\.", ""))
-                        .orElseThrow(() -> new OpReplyException(token, REQUEST_ERROR, "illegal method!"));
-
-                // 校验标识是否合法
-                if (!Identifier.test(identity)) {
-                    throw new OpReplyException(token, REQUEST_ERROR, "identity: %s is illegal".formatted(identity));
-                }
-
-                final var identifier = Identifier.parseIdentity(identity);
+                final var identifier = parseIdentifier(token, request);
 
                 // 校验组件是否存在
                 final var stub = Optional.ofNullable(container.get(identifier.getComponentId()))
@@ -92,7 +96,7 @@ public class ThingOpBindingDmServiceInvoker implements ThingOpBinding<ThingOpBin
                         .orElseThrow(() -> new OpReplyException(
                                 token,
                                 REQUEST_ERROR,
-                                "service: %s not found".formatted(identity)
+                                "service: %s not found".formatted(identifier)
                         ));
 
                 // 执行服务
@@ -123,37 +127,54 @@ public class ThingOpBindingDmServiceInvoker implements ThingOpBinding<ThingOpBin
             // 处理结果
             invokeF.toCompletableFuture()
 
-                    // 将结果转换为OpReply
-                    .handle((v, ex) -> {
-
-                        // 处理OpReply异常
-                        if (ex instanceof OpReplyException orCause) {
-                            return OpReply.fail(orCause);
-                        }
-
-                        // 处理常规异常
-                        else if (ex instanceof Exception) {
-                            return OpReply.fail(token, REQUEST_ERROR, getCause(ex).getMessage());
-                        }
-
-                        // 处理正常返回
-                        else {
-                            return OpReply.succeed(token, v);
-                        }
-
-                    })
+                    // 处理为OpReply
+                    .handle(handleOpReply(token))
 
                     // 发送结果
-                    .thenCompose(reply -> thing.op().post(rTopic, reply))
+                    .thenCompose(reply -> op.post(rTopic, reply))
 
                     // 记录结果
-                    .whenComplete((v, ex) ->
-                            logger.debug("{}/dm/service completed, token={};", thing.path(), token));
+                    .whenComplete((v, ex) -> logger.debug("{}/dm/service completed, token={};", path, token, ex));
+        };
+    }
+
+    private static Identifier parseIdentifier(String token, OpRequest<JsonObject> request) {
+
+        // 解析服务标识
+        final var identity = Optional.ofNullable(request.method())
+                .filter(method -> !method.isBlank())
+                .map(method -> method.replaceFirst("thing\\.service\\.", ""))
+                .orElseThrow(() -> new OpReplyException(token, REQUEST_ERROR, "illegal method!"));
+
+        // 校验标识是否合法
+        if (!Identifier.test(identity)) {
+            throw new OpReplyException(token, REQUEST_ERROR, "identity: %s is illegal".formatted(identity));
+        }
+
+        return Identifier.parseIdentity(identity);
+    }
+
+    private static BiFunction<Object, Throwable, OpReply<Object>> handleOpReply(String token) {
+        return (v, ex) -> {
+
+            final Throwable cause;
+            if (ex instanceof InvocationTargetException itEx) {
+                cause = itEx.getTargetException();
+            } else {
+                cause = ex;
+            }
+
+            return Optional.ofNullable(cause)
+                    .map(throwable -> optionalCauseBy(throwable, OpReplyException.class)
+                            .map(OpReply::fail)
+                            .orElseGet(() -> OpReply.fail(token, REQUEST_ERROR, throwable.getLocalizedMessage())))
+                    .orElseGet(() -> OpReply.succeed(token, v));
+
         };
     }
 
     // 方法调用，同步/异步，转换为异步
-    private CompletableFuture<Object> invoke(ThingDmCompContainer.Stub stub, ThDmServiceMeta meta, JsonObject argumentJson) {
+    private static CompletableFuture<Object> invoke(ThingDmCompContainer.Stub stub, ThDmServiceMeta meta, JsonObject argumentJson) {
 
         try {
 
