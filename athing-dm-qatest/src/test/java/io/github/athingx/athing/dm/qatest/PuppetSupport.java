@@ -67,7 +67,7 @@ public class PuppetSupport implements LoadingProperties {
 
     private static void setup(Thing thing, ThingPlatform platform) throws Exception {
 
-        thingDm = thing.install(new ThingDmInstaller()).get();
+        thingDm = thing.plugins().install(new ThingDmInstaller()).get();
 
         new ThingDmPlatformBuilder()
                 .product(PRODUCT_ID, EchoComp.class, LightComp.class)
