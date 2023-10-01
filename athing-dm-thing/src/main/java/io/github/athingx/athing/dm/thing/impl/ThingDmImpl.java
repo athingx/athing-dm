@@ -7,7 +7,6 @@ import io.github.athingx.athing.dm.thing.ThingDm;
 import io.github.athingx.athing.dm.thing.ThingDmOption;
 import io.github.athingx.athing.dm.thing.define.DefineThDmComp;
 import io.github.athingx.athing.dm.thing.dump.DumpTo;
-import io.github.athingx.athing.dm.thing.dump.DumpToFn;
 import io.github.athingx.athing.dm.thing.impl.define.DefineThDmCompImpl;
 import io.github.athingx.athing.dm.thing.impl.tsl.TslDumper;
 import io.github.athingx.athing.thing.api.Thing;
@@ -121,20 +120,16 @@ public class ThingDmImpl implements ThingDm {
     }
 
     @Override
-    public DumpTo dump() {
+    public <T> T dumpTo(DumpTo<T> dumper) throws Exception {
+
         final Set<Class<? extends ThingDmComp>> types = container.getThingDmCompSet()
                 .stream()
                 .map(ThingDmComp::getClass)
                 .collect(Collectors.toSet());
-        return new DumpTo() {
 
-            @Override
-            public DumpTo dumpTo(DumpToFn fn) throws Exception {
-                fn.accept(TslDumper.dump(thing.path().getProductId(), types));
-                return this;
-            }
+        final var map = TslDumper.dump(thing.path().getProductId(), types);
 
-        };
+        return dumper.dump(map);
     }
 
     @Override

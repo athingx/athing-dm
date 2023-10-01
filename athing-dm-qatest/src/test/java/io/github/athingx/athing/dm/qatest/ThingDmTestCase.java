@@ -4,12 +4,11 @@ import io.github.athingx.athing.dm.platform.message.ThingDmPostEventMessage;
 import io.github.athingx.athing.dm.platform.message.ThingDmPostPropertyMessage;
 import io.github.athingx.athing.dm.qatest.puppet.LightComp;
 import io.github.athingx.athing.dm.qatest.puppet.event.LightBrightChangedEvent;
-import io.github.athingx.athing.dm.thing.dump.DumpToFn;
+import io.github.athingx.athing.dm.thing.dump.DumpTo;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 import static io.github.athingx.athing.dm.api.Identifier.toIdentifier;
@@ -18,11 +17,11 @@ public class ThingDmTestCase extends PuppetSupport {
 
     @Test
     public void test$thing$dm$dump() throws Exception {
-        final Map<String, String> dumpMap = new HashMap<>();
-        thingDm.dump()
-                .dumpTo(dumpMap::putAll)
-                .dumpTo(new DumpToFn.ToMap(map -> map.forEach((compId, json) -> System.out.printf("component-id:%s\n%s\n%n", compId, json))))
-                .dumpTo(new DumpToFn.ToZip(new File("dump.zip")));
+
+        thingDm.dumpTo(DumpTo.toZip(new File("dump.zip")));
+        
+        final Map<String, String> dumpMap = thingDm.dumpTo(DumpTo.toMap());
+        dumpMap.forEach((compId, json) -> System.out.printf("component-id:%s\n%s\n%n", compId, json));
         Assert.assertTrue(dumpMap.containsKey("echo"));
         Assert.assertTrue(dumpMap.containsKey("light"));
     }

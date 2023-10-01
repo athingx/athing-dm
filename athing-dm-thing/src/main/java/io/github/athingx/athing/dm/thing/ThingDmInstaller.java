@@ -22,7 +22,7 @@ public class ThingDmInstaller implements ThingPluginInstaller<ThingDm> {
 
     @Override
     public Meta<ThingDm> meta() {
-        return new Meta<>(ThingDm.THING_ID, ThingDm.class);
+        return new Meta<>(ThingDm.PLUGIN_ID, ThingDm.class);
     }
 
     @Override

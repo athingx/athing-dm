@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface ThingDm extends ThingPlugin {
 
-    String THING_ID = "athingx.thing.dm";
+    String PLUGIN_ID = "athingx.thing.dm";
 
     /**
      * 投递设备事件
@@ -63,10 +63,13 @@ public interface ThingDm extends ThingPlugin {
     <T extends ThingDmComp> T comp(String compId, Class<T> type);
 
     /**
-     * 导出当前设备模型
+     * 获取设备组件模型
      *
-     * @return 导出处理
+     * @param dumper 设备组件模型导出处理函数
+     * @param <T>    导出结果类型
+     * @return 设备组件模型
+     * @throws Exception 导出失败
      */
-    DumpTo dump();
+    <T> T dumpTo(DumpTo<T> dumper) throws Exception;
 
 }
