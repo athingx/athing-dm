@@ -1,7 +1,7 @@
 package io.github.athingx.athing.dm.common.runtime;
 
 /**
- * 设备平台运行时
+ * 设备运行时
  */
 public class DmRuntime {
 
